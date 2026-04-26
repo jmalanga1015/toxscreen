@@ -1,0 +1,75 @@
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 480px;
+}
+
+.search-inputs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-bar input[type="text"]:focus {
+  border-color: #1a1a2e;
+}
+
+.search-bar input[type="text"]:disabled {
+  background: #f0f0f0;
+}
+
+.search-bar button {
+  padding: 0.65rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.search-bar button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.search-bar button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.radius-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.radius-control label {
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.radius-control input[type="range"] {
+  width: 100%;
+  accent-color: #1a1a2e;
+  cursor: pointer;
+}
+
+.radius-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #aaa;
+}

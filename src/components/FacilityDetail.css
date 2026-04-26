@@ -1,0 +1,130 @@
+.facility-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.back-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: #1a1a2e;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.back-btn:hover {
+  opacity: 1;
+}
+
+.detail-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 0.3rem;
+}
+
+.detail-address {
+  font-size: 0.9rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.detail-distance {
+  background: #1a1a2e;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+}
+
+.detail-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.detail-table-wrap {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.detail-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: #f7f7f7;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-table th:not(:first-child) {
+  text-align: right;
+}
+
+.detail-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #f5f5f5;
+  color: #333;
+}
+
+.detail-table td:not(:first-child) {
+  text-align: right;
+}
+
+.detail-table tr:last-child td {
+  border-bottom: none;
+}
+
+.detail-table tr:hover td {
+  background: #fafafa;
+}
+
+.total-col {
+  font-weight: 600;
+  color: #1a1a2e !important;
+}
+
+.detail-footnote {
+  font-size: 0.78rem;
+  color: #bbb;
+}
