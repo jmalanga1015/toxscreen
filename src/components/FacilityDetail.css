@@ -75,56 +75,121 @@
   color: #1a1a2e;
 }
 
-.detail-table-wrap {
+
+.chemical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chemical-row {
   background: white;
   border-radius: 10px;
+  padding: 1rem 1.2rem;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
-.detail-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
+.chemical-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.detail-table th {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  background: #f7f7f7;
+.chemical-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+}
+
+.chemical-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.chemical-total {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.chemical-summary {
+  font-size: 0.82rem;
   color: #555;
+  line-height: 1.5;
+}
+
+.chemical-breakdown {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 0.78rem;
+  color: #999;
+  flex-wrap: wrap;
+}
+
+/* Concern badges */
+.concern-badge {
+  font-size: 0.72rem;
   font-weight: 600;
-  border-bottom: 1px solid #eee;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.detail-table th:not(:first-child) {
-  text-align: right;
+.concern-high {
+  background: #fdecea;
+  color: #c0392b;
 }
 
-.detail-table td {
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid #f5f5f5;
-  color: #333;
+.concern-medium {
+  background: #fef3e2;
+  color: #d35400;
 }
 
-.detail-table td:not(:first-child) {
-  text-align: right;
+.concern-low {
+  background: #eafaf1;
+  color: #1e8449;
 }
 
-.detail-table tr:last-child td {
-  border-bottom: none;
+.iris-label {
+  font-size: 0.72rem;
+  color: #888;
+  font-style: italic;
 }
 
-.detail-table tr:hover td {
-  background: #fafafa;
+.pubchem-link {
+  font-size: 0.75rem;
+  color: #aaa;
+  white-space: nowrap;
 }
 
-.total-col {
-  font-weight: 600;
-  color: #1a1a2e !important;
+.chemical-summary.loading {
+  color: #bbb;
+  font-style: italic;
+}
+
+.chemical-summary.no-description {
+  color: #aaa;
+  font-style: italic;
+}
+
+.chemical-summary.no-description a {
+  color: #888;
 }
 
 .detail-footnote {
   font-size: 0.78rem;
   color: #bbb;
+}
+
+.detail-footnote a {
+  color: #888;
 }
