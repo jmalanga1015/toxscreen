@@ -66,10 +66,12 @@ export default function Map({ facilities, onSelect, selectedId }) {
         <div class="popup">
           <strong>${facility.name}</strong>
           <span>${facility.city}, ${facility.state}</span>
-          <table>
-            <thead><tr><th>Chemical</th><th>Released</th></tr></thead>
-            <tbody>${chemicalRows}</tbody>
-          </table>
+          <div class="popup-table-wrap">
+            <table>
+              <thead><tr><th>Chemical</th><th>Released</th></tr></thead>
+              <tbody>${chemicalRows}</tbody>
+            </table>
+          </div>
           <button class="popup-detail-btn" data-facility-id="${facility.id}">
             See Facility Details
           </button>

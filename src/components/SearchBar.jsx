@@ -7,9 +7,7 @@ export default function SearchBar({ onSearch, onRadiusChange, radius, loading })
   function handleSubmit(e) {
     e.preventDefault()
     const trimmed = zip.trim()
-    if (trimmed.length === 5 && /^\d{5}$/.test(trimmed)) {
-      onSearch(trimmed)
-    }
+    if (trimmed.length > 0) onSearch(trimmed)
   }
 
   return (
@@ -17,14 +15,13 @@ export default function SearchBar({ onSearch, onRadiusChange, radius, loading })
       <div className="search-inputs">
         <input
           type="text"
-          inputMode="numeric"
-          maxLength={5}
-          placeholder="Enter ZIP code (e.g. 10001)"
+          maxLength={100}
+          placeholder="ZIP code, city, or address"
           value={zip}
           onChange={e => setZip(e.target.value)}
           disabled={loading}
         />
-        <button type="submit" disabled={loading || zip.trim().length !== 5}>
+        <button type="submit" disabled={loading || zip.trim().length === 0}>
           {loading ? 'Searching…' : 'Search'}
         </button>
       </div>

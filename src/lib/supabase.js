@@ -5,19 +5,20 @@ export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
-async function geocodeZip(zip) {
+async function geocodeLocation(query) {
   const token = import.meta.env.VITE_MAPBOX_TOKEN
+  const encoded = encodeURIComponent(query)
   const res = await fetch(
-    `https://api.mapbox.com/geocoding/v5/mapbox.places/${zip}.json?country=US&types=postcode&access_token=${token}`
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encoded}.json?country=US&access_token=${token}`
   )
   const json = await res.json()
-  if (!json.features?.length) throw new Error(`ZIP code ${zip} not found`)
+  if (!json.features?.length) throw new Error(`Location "${query}" not found`)
   const [lng, lat] = json.features[0].center
   return { lat, lng }
 }
 
 export async function getFacilitiesNearZip(zip, radiusMiles = 25) {
-  const { lat, lng } = await geocodeZip(zip)
+  const { lat, lng } = await geocodeLocation(zip)
 
   const { data: facilities, error } = await supabase
     .rpc('facilities_within_radius', { lat, lng, radius_miles: radiusMiles })
