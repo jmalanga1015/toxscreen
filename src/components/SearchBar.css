@@ -67,6 +67,17 @@
   cursor: pointer;
 }
 
+@media (max-width: 600px) {
+  .search-bar {
+    max-width: 100%;
+    gap: 0.5rem;
+  }
+
+  .radius-ticks {
+    display: none;
+  }
+}
+
 .radius-ticks {
   display: flex;
   justify-content: space-between;

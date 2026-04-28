@@ -5,6 +5,67 @@ export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
+export async function sendMagicLink(email) {
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.origin },
+  })
+  if (error) throw error
+}
+
+export async function signOut() {
+  const { error } = await supabase.auth.signOut()
+  if (error) throw error
+}
+
+export async function getSavedSearches() {
+  const { data, error } = await supabase
+    .from('saved_searches')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data
+}
+
+export async function saveSearch(location, radius) {
+  const { error } = await supabase
+    .from('saved_searches')
+    .insert({ location, radius })
+  if (error) throw error
+}
+
+export async function deleteSavedSearch(id) {
+  const { error } = await supabase
+    .from('saved_searches')
+    .delete()
+    .eq('id', id)
+  if (error) throw error
+}
+
+export async function getSavedFacilities() {
+  const { data, error } = await supabase
+    .from('saved_facilities')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data
+}
+
+export async function saveFacility(facilityId, facilityName) {
+  const { error } = await supabase
+    .from('saved_facilities')
+    .insert({ facility_id: facilityId, facility_name: facilityName })
+  if (error) throw error
+}
+
+export async function deleteSavedFacility(id) {
+  const { error } = await supabase
+    .from('saved_facilities')
+    .delete()
+    .eq('id', id)
+  if (error) throw error
+}
+
 async function geocodeLocation(query) {
   const token = import.meta.env.VITE_MAPBOX_TOKEN
   const encoded = encodeURIComponent(query)

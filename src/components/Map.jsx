@@ -1,17 +1,21 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './Map.css'
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
-export default function Map({ facilities, onSelect, selectedId }) {
+function fmt(lbs) {
+  if (lbs > 0 && lbs < 1) return '<1'
+  return lbs.toLocaleString(undefined, { maximumFractionDigits: 0 })
+}
+
+export default function Map({ facilities, onSelect }) {
   const containerRef = useRef(null)
   const mapRef = useRef(null)
   const markersRef = useRef([])
-  const facilitiesRef = useRef([])
+  const [preview, setPreview] = useState(null)
 
-  // Initialize map once
   useEffect(() => {
     mapRef.current = new mapboxgl.Map({
       container: containerRef.current,
@@ -20,23 +24,13 @@ export default function Map({ facilities, onSelect, selectedId }) {
       zoom: 3.5,
     })
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
-
-    // Event delegation: catch clicks on "See Facility Details" buttons inside popups
-    containerRef.current.addEventListener('click', e => {
-      const btn = e.target.closest('[data-facility-id]')
-      if (!btn) return
-      const id = Number(btn.dataset.facilityId)
-      const facility = facilitiesRef.current.find(f => f.id === id)
-      if (facility) onSelect?.(facility)
-    })
+    mapRef.current.on('click', () => setPreview(null))
 
     return () => mapRef.current.remove()
   }, [])
 
-  // Update markers whenever facilities change
   useEffect(() => {
-    facilitiesRef.current = facilities
-
+    setPreview(null)
     markersRef.current.forEach(m => m.remove())
     markersRef.current = []
 
@@ -48,36 +42,6 @@ export default function Map({ facilities, onSelect, selectedId }) {
     for (const facility of facilities) {
       if (!facility.latitude || !facility.longitude) continue
 
-      const topChemicals = [...facility.releases]
-        .filter(r => r.total_releases_lbs > 0)
-        .sort((a, b) => b.total_releases_lbs - a.total_releases_lbs)
-        .slice(0, 5)
-
-      const chemicalRows = topChemicals.length
-        ? topChemicals.map(r =>
-            `<tr>
-              <td>${r.chemical}</td>
-              <td>${r.total_releases_lbs.toLocaleString(undefined, { maximumFractionDigits: 0 })} lbs</td>
-            </tr>`
-          ).join('')
-        : '<tr><td colspan="2">No release data</td></tr>'
-
-      const popup = new mapboxgl.Popup({ maxWidth: '300px' }).setHTML(`
-        <div class="popup">
-          <strong>${facility.name}</strong>
-          <span>${facility.city}, ${facility.state}</span>
-          <div class="popup-table-wrap">
-            <table>
-              <thead><tr><th>Chemical</th><th>Released</th></tr></thead>
-              <tbody>${chemicalRows}</tbody>
-            </table>
-          </div>
-          <button class="popup-detail-btn" data-facility-id="${facility.id}">
-            See Facility Details
-          </button>
-        </div>
-      `)
-
       const totalLbs = facility.releases.reduce((sum, r) => sum + r.total_releases_lbs, 0)
       const color = totalLbs === 0 ? '#aaa'
         : totalLbs < 1000 ? '#27ae60'
@@ -86,10 +50,14 @@ export default function Map({ facilities, onSelect, selectedId }) {
 
       const marker = new mapboxgl.Marker({ color })
         .setLngLat([facility.longitude, facility.latitude])
-        .setPopup(popup)
         .addTo(map)
 
       marker.getElement().style.cursor = 'pointer'
+      marker.getElement().addEventListener('click', e => {
+        e.stopPropagation()
+        setPreview(facility)
+      })
+
       markersRef.current.push(marker)
       bounds.extend([facility.longitude, facility.latitude])
     }
@@ -99,5 +67,49 @@ export default function Map({ facilities, onSelect, selectedId }) {
     }
   }, [facilities])
 
-  return <div ref={containerRef} className="map-container" />
+  const topChemicals = preview
+    ? [...preview.releases]
+        .filter(r => r.total_releases_lbs > 0)
+        .sort((a, b) => b.total_releases_lbs - a.total_releases_lbs)
+        .slice(0, 3)
+    : []
+
+  const totalLbs = preview
+    ? preview.releases.reduce((sum, r) => sum + r.total_releases_lbs, 0)
+    : 0
+
+  return (
+    <div ref={containerRef} className="map-container">
+      {preview && (
+        <div className="map-preview-card">
+          <div className="map-preview-header">
+            <div className="map-preview-title">
+              <div className="map-preview-name">{preview.name}</div>
+              <div className="map-preview-sub">
+                {preview.city}, {preview.state} · {preview.distance_miles} mi away
+              </div>
+            </div>
+            <button className="map-preview-close" onClick={() => setPreview(null)}>×</button>
+          </div>
+          <div className="map-preview-total">{fmt(totalLbs)} lbs total released</div>
+          {topChemicals.length > 0 && (
+            <div className="map-preview-chemicals">
+              {topChemicals.map(r => (
+                <div key={r.chemical} className="map-preview-chem">
+                  <span className="map-preview-chem-name">{r.chemical}</span>
+                  <span className="map-preview-chem-lbs">{fmt(r.total_releases_lbs)} lbs</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <button
+            className="map-preview-btn"
+            onClick={() => { onSelect?.(preview); setPreview(null) }}
+          >
+            See Full Details
+          </button>
+        </div>
+      )}
+    </div>
+  )
 }

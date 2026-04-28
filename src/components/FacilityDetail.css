@@ -4,6 +4,35 @@
   gap: 1.5rem;
 }
 
+.detail-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.save-facility-btn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: white;
+  color: #1a1a2e;
+  border: 2px solid #1a1a2e;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.save-facility-btn:hover:not(:disabled) {
+  background: #1a1a2e;
+  color: white;
+}
+
+.save-facility-btn:disabled {
+  border-color: #27ae60;
+  color: #27ae60;
+  cursor: default;
+}
+
 .back-btn {
   align-self: flex-start;
   background: none;
@@ -75,6 +104,21 @@
   color: #1a1a2e;
 }
 
+
+@media (max-width: 600px) {
+  .detail-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chemical-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .chemical-meta {
+    flex-wrap: wrap;
+  }
+}
 
 .chemical-list {
   display: flex;

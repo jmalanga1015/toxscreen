@@ -70,6 +70,11 @@ const PUBCHEM_ALIASES = {
   'DIOXIN AND DIOXIN-LIKE COMPOUNDS': '2,3,7,8-Tetrachlorodibenzo-p-dioxin',
   'POLYCYCLIC AROMATIC COMPOUNDS': 'benzo[a]pyrene',
   'POLYBROMINATED BIPHENYLS': 'polybrominated biphenyl',
+  'CHROMIUM AND CHROMIUM COMPOUNDS(EXCEPT FOR CHROMITE ORE MINED IN THE TRANSVAAL REGION)': 'chromium',
+  'CHROMIUM COMPOUNDS': 'chromium',
+  'BARIUM COMPOUNDS (EXCEPT FOR BARIUM SULFATE (CAS NO. 7727-43-7))': 'barium',
+  'SULFURIC ACID (ACID AEROSOLS INCLUDING MISTS, VAPORS, GAS, FOG, AND OTHER AIRBORNE FORMS OF ANY PARTICLE SIZE)': 'sulfuric acid',
+  'HYDROCHLORIC ACID (ACID AEROSOLS INCLUDING MISTS, VAPORS, GAS, FOG, AND OTHER AIRBORNE FORMS OF ANY PARTICLE SIZE)': 'hydrochloric acid',
 }
 
 function stripCompounds(name) {
@@ -86,14 +91,14 @@ async function fetchDescription(name) {
   try {
     // Try exact name first, then alias, then stripped fallback
     let cid = await getCID(name)
-    let usedFallbackName = false
-    if (!cid && PUBCHEM_ALIASES[name.toUpperCase()]) {
-      cid = await getCID(PUBCHEM_ALIASES[name.toUpperCase()])
-      usedFallbackName = true
+    let usedStrippedFallback = false
+    const normalizedName = name.toUpperCase().replace(/\s+/g, ' ').trim()
+    if (!cid && PUBCHEM_ALIASES[normalizedName]) {
+      cid = await getCID(PUBCHEM_ALIASES[normalizedName])
     }
     if (!cid) {
       cid = await getCID(stripCompounds(name))
-      usedFallbackName = true
+      usedStrippedFallback = true
     }
 
     if (!cid) { setCache(name, null); return null }
@@ -103,7 +108,7 @@ async function fetchDescription(name) {
 
     // Reject chemistry-only descriptions fetched via stripped fallback
     const chemistryPhrases = ['atomic number', 'chemical element atom', 'group element atom']
-    if (usedFallbackName && chemistryPhrases.some(p => text.toLowerCase().includes(p))) {
+    if (usedStrippedFallback && chemistryPhrases.some(p => text.toLowerCase().includes(p))) {
       setCache(name, null)
       return null
     }

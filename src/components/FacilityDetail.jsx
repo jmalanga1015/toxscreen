@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getChemicalInfo, getConcernLabel } from '../lib/chemicals'
 import { fetchChemicalDescriptions } from '../lib/pubchem'
+import { saveFacility } from '../lib/supabase'
 import './FacilityDetail.css'
 
 function fmt(lbs) {
@@ -16,9 +17,23 @@ function ConcernBadge({ concern }) {
   )
 }
 
-export default function FacilityDetail({ facility, onBack }) {
+export default function FacilityDetail({ facility, onBack, user }) {
   const [pubchemDescriptions, setPubchemDescriptions] = useState({})
   const [loadingDescriptions, setLoadingDescriptions] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  async function handleSaveFacility() {
+    try {
+      await saveFacility(facility.id, facility.name)
+      setSaved(true)
+    } catch (err) {
+      if (err?.code === '23505') {
+        setSaved(true)
+      } else {
+        console.error(err)
+      }
+    }
+  }
 
   const sorted = [...facility.releases].sort((a, b) => b.total_releases_lbs - a.total_releases_lbs)
 
@@ -38,7 +53,14 @@ export default function FacilityDetail({ facility, onBack }) {
 
   return (
     <div className="facility-detail">
-      <button className="back-btn" onClick={onBack}>← Back to results</button>
+      <div className="detail-top">
+        <button className="back-btn" onClick={onBack}>← Back to results</button>
+        {user && (
+          <button className="save-facility-btn" onClick={handleSaveFacility} disabled={saved}>
+            {saved ? 'Saved ✓' : 'Save facility'}
+          </button>
+        )}
+      </div>
 
       <div className="detail-header">
         <h2>{facility.name}</h2>

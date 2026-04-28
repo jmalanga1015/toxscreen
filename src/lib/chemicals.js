@@ -14,6 +14,8 @@ export const CHEMICAL_INFO = {
   'ARSENIC':                    { concern: 'high',   irisClassification: 'Carcinogenic to Humans' },
   'ARSENIC COMPOUNDS':          { concern: 'high',   irisClassification: 'Carcinogenic to Humans' },
   'CHROMIUM COMPOUNDS':         { concern: 'high',   irisClassification: 'Carcinogenic to Humans' },
+  'CHROMIUM AND CHROMIUM COMPOUNDS(EXCEPT FOR CHROMITE ORE MINED IN THE TRANSVAAL REGION)':
+                                { concern: 'high',   irisClassification: 'Carcinogenic to Humans' },
   'VINYL CHLORIDE':             { concern: 'high',   irisClassification: 'Carcinogenic to Humans' },
   'FORMALDEHYDE':               { concern: 'high',   irisClassification: 'Carcinogenic to Humans' },
   'TRICHLOROETHYLENE':          { concern: 'high',   irisClassification: 'Carcinogenic to Humans' },
