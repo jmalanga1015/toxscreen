@@ -1,0 +1,135 @@
+.content-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+}
+
+.content-page h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: -0.5px;
+  margin-bottom: 1rem;
+}
+
+.content-lead {
+  font-size: 1.05rem;
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.content-page h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 1.75rem 0 0.5rem;
+}
+
+.content-page p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+.content-page p a {
+  color: #1a1a2e;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1px;
+  transition: border-color 0.15s;
+}
+
+.content-page p a:hover {
+  border-color: #1a1a2e;
+}
+
+/* Sources */
+.source-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.source-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.source-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.source-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #eef0f8;
+  color: #1a1a2e;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.source-card p {
+  margin-bottom: 0.75rem;
+}
+
+.source-card a {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  text-decoration: none;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1px;
+  transition: border-color 0.15s;
+}
+
+.source-card a:hover {
+  border-color: #1a1a2e;
+}
+
+/* FAQ */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.faq-item {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-item h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.faq-item p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .content-page {
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .content-page h1 {
+    font-size: 1.6rem;
+  }
+}
