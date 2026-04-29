@@ -76,7 +76,7 @@ export default function Map({ facilities, onSelect, selected, hideZeroReleases }
     }
 
     if (!bounds.isEmpty()) {
-      map.fitBounds(bounds, { padding: 60, maxZoom: 13 })
+      map.fitBounds(bounds, { padding: 60, maxZoom: 13, duration: 1200 })
     }
   }, [facilities, hideZeroReleases])
 

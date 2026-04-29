@@ -343,13 +343,65 @@ main {
   white-space: nowrap;
   transition: color 0.15s;
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 .filter-toggle-btn:hover { color: #1a1a2e; }
+
+.filter-active-badge {
+  background: #1a1a2e;
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.1rem 0.4rem;
+  line-height: 1.4;
+}
+
+.filter-reset-inline {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  color: #888;
+  cursor: pointer;
+  padding: 0.15rem 0.5rem;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+.filter-reset-inline:hover { border-color: #1a1a2e; color: #1a1a2e; }
 
 .toolbar-filters {
   border-top: 1px solid #eee;
   padding-top: 0.4rem;
 }
+
+.filter-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  height: 100%;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.filter-empty-state button {
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: white;
+  color: #1a1a2e;
+  border: 1.5px solid #1a1a2e;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.filter-empty-state button:hover { background: #1a1a2e; color: white; }
 
 .error {
   font-size: 0.9rem;

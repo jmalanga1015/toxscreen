@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './FacilityList.css'
 
 function fmt(lbs) {
@@ -29,6 +29,12 @@ function sortFacilities(facilities, sortBy) {
 
 export default function FacilityList({ facilities, onSelect, compact = false, selectedId = null }) {
   const [sortBy, setSortBy] = useState('distance')
+
+  useEffect(() => {
+    if (!selectedId) return
+    const el = document.querySelector(`[data-facility-id="${selectedId}"]`)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [selectedId])
 
   const withReleases = facilities.filter(f => f.releases.length > 0)
   if (!withReleases.length) return null
@@ -61,6 +67,7 @@ export default function FacilityList({ facilities, onSelect, compact = false, se
           return (
             <div
               key={facility.id}
+              data-facility-id={facility.id}
               className={`facility-card${isSelected ? ' facility-card--selected' : ''}`}
               onClick={() => onSelect(facility)}
               role="button"

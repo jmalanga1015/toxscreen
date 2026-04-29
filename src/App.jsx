@@ -95,6 +95,29 @@ function App() {
 
   const hasResults = searchedLocation && !loading
 
+  const maxLbs = facilities.length > 0
+    ? Math.max(...facilities.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1)
+    : 1
+  const maxChemicals = facilities.length > 0
+    ? Math.max(...facilities.map(f => f.releases.length), 1)
+    : 1
+
+  const resetFilters = {
+    concernLevels: ['high', 'medium', 'low'],
+    media: ['air', 'water', 'land'],
+    lbsRange: [0, maxLbs],
+    chemicalsRange: [0, maxChemicals],
+    chemical: '',
+  }
+
+  const activeFilterCount = [
+    filters.concernLevels.length < 3,
+    filters.media.length < 3,
+    filters.chemical.trim() !== '',
+    filters.lbsRange[0] > 0 || filters.lbsRange[1] < maxLbs,
+    filters.chemicalsRange[0] > 0 || filters.chemicalsRange[1] < maxChemicals,
+  ].filter(Boolean).length
+
   const filteredFacilities = facilities.filter(f => {
     const totalLbs = f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)
     const [lbsMin, lbsMax] = filters.lbsRange
@@ -230,7 +253,15 @@ function App() {
                     <div className="toolbar-divider" />
                     <button className="filter-toggle-btn" onClick={() => setShowFilters(v => !v)}>
                       {showFilters ? '▲ Hide filters' : '▼ Show filters'}
+                      {activeFilterCount > 0 && (
+                        <span className="filter-active-badge">{activeFilterCount}</span>
+                      )}
                     </button>
+                    {!showFilters && activeFilterCount > 0 && (
+                      <button className="filter-reset-inline" onClick={() => setFilters(resetFilters)}>
+                        Reset filters
+                      </button>
+                    )}
                   </>}
                   {facilities.length > 0 && (
                     <div className="mobile-tabs">
@@ -260,15 +291,22 @@ function App() {
                 <Map facilities={filteredFacilities} onSelect={handleSelect} selected={selected} hideZeroReleases={hideZeroReleases} />
               </div>
               <div className={`results-list${mobileView === 'map' ? ' mobile-hidden' : ''}`}>
-                {/* Mobile: toggle between list and detail */}
-                <div className="show-mobile">
-                  {!selected && <FacilityList facilities={filteredFacilities} onSelect={handleSelect} />}
-                  {selected && <FacilityDetail facility={selected} user={user} onBack={() => setSelected(null)} />}
-                </div>
-                {/* Desktop: always show compact list */}
-                <div className="show-desktop">
-                  <FacilityList facilities={filteredFacilities} onSelect={handleSelect} compact selectedId={selected?.id} />
-                </div>
+                {filteredFacilities.length === 0 && facilities.length > 0 ? (
+                  <div className="filter-empty-state">
+                    <p>No facilities match your current filters.</p>
+                    <button onClick={() => setFilters(resetFilters)}>Reset filters</button>
+                  </div>
+                ) : (<>
+                  {/* Mobile: toggle between list and detail */}
+                  <div className="show-mobile">
+                    {!selected && <FacilityList facilities={filteredFacilities} onSelect={handleSelect} />}
+                    {selected && <FacilityDetail facility={selected} user={user} onBack={() => setSelected(null)} />}
+                  </div>
+                  {/* Desktop: always show compact list */}
+                  <div className="show-desktop">
+                    <FacilityList facilities={filteredFacilities} onSelect={handleSelect} compact selectedId={selected?.id} />
+                  </div>
+                </>)}
               </div>
               {/* Desktop-only detail panel */}
               <div className="results-detail show-desktop">

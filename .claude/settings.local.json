@@ -14,7 +14,11 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(gh repo *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "WebFetch(domain:pubchem.ncbi.nlm.nih.gov)",
+      "Bash(xargs ls *)",
+      "Bash(npm run *)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }
