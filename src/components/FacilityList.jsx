@@ -3,7 +3,9 @@ import './FacilityList.css'
 
 function fmt(lbs) {
   if (lbs > 0 && lbs < 1) return '<1'
-  return lbs.toLocaleString(undefined, { maximumFractionDigits: 0 })
+  if (lbs >= 1_000_000) return `${(lbs / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`
+  if (lbs >= 1_000)     return `${(lbs / 1_000).toFixed(1).replace(/\.0$/, '')}K`
+  return Math.round(lbs).toLocaleString()
 }
 
 const SORT_OPTIONS = [
@@ -25,7 +27,7 @@ function sortFacilities(facilities, sortBy) {
   })
 }
 
-export default function FacilityList({ facilities, onSelect }) {
+export default function FacilityList({ facilities, onSelect, compact = false, selectedId = null }) {
   const [sortBy, setSortBy] = useState('distance')
 
   const withReleases = facilities.filter(f => f.releases.length > 0)
@@ -34,7 +36,7 @@ export default function FacilityList({ facilities, onSelect }) {
   const sorted = sortFacilities(withReleases, sortBy)
 
   return (
-    <div className="facility-list">
+    <div className={`facility-list${compact ? ' facility-list--compact' : ''}`}>
       <div className="list-header">
         <h2>{withReleases.length} Facilities with Releases</h2>
         <div className="sort-control">
@@ -54,33 +56,47 @@ export default function FacilityList({ facilities, onSelect }) {
           const totalLbs = facility.releases
             .reduce((sum, r) => sum + r.total_releases_lbs, 0)
 
+          const isSelected = facility.id === selectedId
+
           return (
-            <div key={facility.id} className="facility-card" onClick={() => onSelect(facility)} role="button" tabIndex={0}>
+            <div
+              key={facility.id}
+              className={`facility-card${isSelected ? ' facility-card--selected' : ''}`}
+              onClick={() => onSelect(facility)}
+              role="button"
+              tabIndex={0}
+            >
               <div className="card-header">
                 <span className="facility-name">{facility.name}</span>
                 <span className="distance">{facility.distance_miles} mi</span>
               </div>
               <div className="card-location">
-                {facility.address}, {facility.city}, {facility.state} {facility.zip_code}
+                {facility.city}, {facility.state}
               </div>
-              <div className="card-stats">
-                <div className="stat">
-                  <span className="stat-label">Total Released</span>
-                  <span className="stat-value">
-                    {fmt(totalLbs)} lbs
-                  </span>
-                </div>
-                <div className="stat">
-                  <span className="stat-label">Chemicals Reported</span>
-                  <span className="stat-value">{facility.releases.length}</span>
-                </div>
-                {topChemical && (
+              {!compact && (
+                <div className="card-stats">
                   <div className="stat">
-                    <span className="stat-label">Top Chemical</span>
-                    <span className="stat-value">{topChemical.chemical}</span>
+                    <span className="stat-label">Total Released</span>
+                    <span className="stat-value">{fmt(totalLbs)} lbs</span>
                   </div>
-                )}
-              </div>
+                  <div className="stat">
+                    <span className="stat-label">Chemicals Reported</span>
+                    <span className="stat-value">{facility.releases.length}</span>
+                  </div>
+                  {topChemical && (
+                    <div className="stat">
+                      <span className="stat-label">Top Chemical</span>
+                      <span className="stat-value">{topChemical.chemical}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {compact && (
+                <div className="card-compact-stats">
+                  <span>{fmt(totalLbs)} lbs</span>
+                  <span>{facility.releases.length} chemical{facility.releases.length !== 1 ? 's' : ''}</span>
+                </div>
+              )}
             </div>
           )
         })}

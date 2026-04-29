@@ -1,0 +1,215 @@
+.filter-panel {
+  padding: 1.5rem 1.25rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.filter-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.filter-panel-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.filter-reset {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+  color: #666;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.filter-reset:hover { border-color: #1a1a2e; color: #1a1a2e; }
+
+.filter-count {
+  font-size: 0.8rem;
+  color: #999;
+  margin-bottom: 1.5rem;
+}
+
+.filter-section {
+  margin-bottom: 1.5rem;
+}
+
+.filter-section-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin-bottom: 0.6rem;
+}
+
+.filter-value {
+  font-weight: 600;
+  color: #1a1a2e;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.82rem;
+}
+
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: #333;
+  cursor: pointer;
+  padding: 0.1rem 0;
+  user-select: none;
+}
+
+.filter-check input[type="checkbox"] {
+  accent-color: #1a1a2e;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.concern-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.filter-text {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1.5px solid #ddd;
+  border-radius: 7px;
+  outline: none;
+  color: #1a1a2e;
+  transition: border-color 0.15s;
+}
+.filter-text:focus { border-color: #1a1a2e; }
+.filter-text::placeholder { color: #bbb; }
+
+.filter-slider {
+  width: 100%;
+  accent-color: #1a1a2e;
+  cursor: pointer;
+  margin: 0.25rem 0;
+}
+
+.filter-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #aaa;
+  margin-top: 0.1rem;
+}
+
+/* Chemical autocomplete */
+.chem-autocomplete {
+  position: relative;
+}
+
+.chem-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+}
+.chem-clear:hover { color: #555; }
+
+.chem-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1.5px solid #ddd;
+  border-radius: 7px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  z-index: 100;
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.chem-dropdown li {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chem-dropdown li.highlighted,
+.chem-dropdown li:hover {
+  background: #f0f3ff;
+  color: #1a1a2e;
+}
+
+/* Inline toolbar layout */
+.filter-panel-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  align-items: flex-start;
+}
+
+.filter-inline-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.filter-inline-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin-bottom: 0.1rem;
+}
+
+.filter-inline-slider {
+  min-width: 160px;
+}
+
+
+.filter-inline-chemical {
+  flex: 1;
+  min-width: 160px;
+  max-width: 280px;
+}
+
+.filter-inline-chemical .chem-autocomplete {
+  width: 100%;
+}
+
+.filter-inline-chemical .filter-text--sm {
+  width: 100%;
+}
+
+.filter-text--sm {
+  width: 130px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.82rem;
+}

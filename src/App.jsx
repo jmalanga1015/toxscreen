@@ -5,7 +5,9 @@ import FacilityList from './components/FacilityList'
 import FacilityDetail from './components/FacilityDetail'
 import SavedPanel from './components/SavedPanel'
 import ContentPage from './components/ContentPage'
+import FilterPanel from './components/FilterPanel'
 import { getFacilitiesNearZip, sendMagicLink, signOut, saveSearch } from './lib/supabase'
+import { getChemicalInfo } from './lib/chemicals'
 import { useAuth } from './hooks/useAuth'
 import './App.css'
 
@@ -19,7 +21,16 @@ function App() {
   const [selected, setSelected] = useState(null)
   const [mobileView, setMobileView] = useState('list')
   const [showSaved, setShowSaved] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
   const [activePage, setActivePage] = useState(null)
+  const [hideZeroReleases, setHideZeroReleases] = useState(true)
+  const [filters, setFilters] = useState({
+    concernLevels: ['high', 'medium', 'low'],
+    media: ['air', 'water', 'land'],
+    lbsRange: [0, Infinity],
+    chemicalsRange: [0, Infinity],
+    chemical: '',
+  })
 
   const [authEmail, setAuthEmail] = useState('')
   const [authSent, setAuthSent] = useState(false)
@@ -35,6 +46,16 @@ function App() {
     try {
       const data = await getFacilitiesNearZip(location, miles)
       setFacilities(data)
+      // Reset range filters to match new data's actual max values
+      if (data.length > 0) {
+        const maxLbs = Math.max(...data.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1)
+        const maxChemicals = Math.max(...data.map(f => f.releases.length), 1)
+        setFilters(prev => ({
+          ...prev,
+          lbsRange: [0, maxLbs],
+          chemicalsRange: [0, maxChemicals],
+        }))
+      }
     } catch (err) {
       setError('Something went wrong. Please try again.')
       console.error(err)
@@ -74,12 +95,53 @@ function App() {
 
   const hasResults = searchedLocation && !loading
 
+  const filteredFacilities = facilities.filter(f => {
+    const totalLbs = f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)
+    const [lbsMin, lbsMax] = filters.lbsRange
+    if (totalLbs < lbsMin || (lbsMax !== Infinity && totalLbs > lbsMax)) return false
+
+    const [chemMin, chemMax] = filters.chemicalsRange
+    if (f.releases.length < chemMin || (chemMax !== Infinity && f.releases.length > chemMax)) return false
+
+    if (filters.chemical.trim()) {
+      const q = filters.chemical.trim().toLowerCase()
+      if (!f.releases.some(r => r.chemical.toLowerCase().includes(q))) return false
+    }
+
+    const allConcerns = ['high', 'medium', 'low']
+    const filteringConcern = filters.concernLevels.length < 3
+    if (filteringConcern) {
+      const hasConcern = f.releases.some(r => {
+        const info = getChemicalInfo(r.chemical)
+        return info && filters.concernLevels.includes(info.concern)
+      })
+      if (!hasConcern) return false
+    }
+
+    const filteringMedia = filters.media.length < 3
+    if (filteringMedia) {
+      const hasMedia = f.releases.some(r =>
+        (filters.media.includes('air')   && r.air_releases_lbs   > 0) ||
+        (filters.media.includes('water') && r.water_releases_lbs > 0) ||
+        (filters.media.includes('land')  && r.land_releases_lbs  > 0)
+      )
+      if (!hasMedia) return false
+    }
+
+    return true
+  })
+
   return (
     <div className="app">
       <header>
         <div className="header-inner">
           <div className="header-left">
-            <span className="header-logo" onClick={() => setActivePage(null)} style={{cursor:'pointer'}}>ToxScreen</span>
+            <img
+              src="/logo-white.svg"
+              alt="ToxScreen"
+              className="header-logo"
+              onClick={() => setActivePage(null)}
+            />
             <nav className="header-nav">
               {['about','sources','faq','contact'].map(page => (
                 <button
@@ -114,10 +176,7 @@ function App() {
       <main>
         {activePage ? <ContentPage page={activePage} /> : !searchedLocation ? (
           <div className="hero">
-            <div className="hero-text">
-              <h2>Know what's being released near you</h2>
-              <p>Search by ZIP code, city, or address to see EPA toxic release data for industrial facilities in your area.</p>
-            </div>
+            <img src="/logo-hero.svg" alt="ToxScreen — Know what's near you" className="hero-logo" />
             <div className="hero-search">
               <SearchBar onSearch={handleSearch} onRadiusChange={handleRadiusChange} radius={radius} loading={loading} />
             </div>
@@ -125,35 +184,98 @@ function App() {
         ) : (
           <div className="results-wrap">
             <div className="results-toolbar">
-              <SearchBar onSearch={handleSearch} onRadiusChange={handleRadiusChange} radius={radius} loading={loading} />
-              {hasResults && (
-                <div className="result-row">
-                  <p className="result-count">
-                    {facilities.length === 0
-                      ? `No reporting facilities found within ${radius} miles of ${searchedLocation}.`
-                      : `${facilities.length} facilit${facilities.length === 1 ? 'y' : 'ies'} found within ${radius} miles of ${searchedLocation}.`}
-                  </p>
-                  {user && facilities.length > 0 && (
-                    <button className="save-search-btn" onClick={handleSaveSearch}>Save search</button>
+
+              {/* Left col: search input + searched location beneath */}
+              <div className="toolbar-search-col">
+                <SearchBar onSearch={handleSearch} loading={loading} compact />
+                {searchedLocation && (
+                  <div className="toolbar-location">
+                    <span className="toolbar-location-label">Showing results for:</span>
+                    <span className="toolbar-location-value">{searchedLocation}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Right col: radius + meta row, then filters row */}
+              <div className="toolbar-right-col">
+                <div className="toolbar-meta">
+                  <label className="radius-label" htmlFor="toolbar-radius">
+                    Radius: <strong>{radius} mi</strong>
+                  </label>
+                  <input
+                    id="toolbar-radius"
+                    type="range"
+                    min={5} max={50} step={5}
+                    value={radius}
+                    onChange={e => handleRadiusChange(Number(e.target.value))}
+                    disabled={loading}
+                    className="toolbar-radius-slider"
+                  />
+                  {hasResults && facilities.length > 0 && <>
+                    <div className="toolbar-divider" />
+                    <p className="result-count">
+                      {`${filteredFacilities.length} of ${facilities.length} facilit${facilities.length === 1 ? 'y' : 'ies'} within ${radius} mi`}
+                    </p>
+                    <label className="zero-toggle">
+                      <input type="checkbox" checked={hideZeroReleases} onChange={e => setHideZeroReleases(e.target.checked)} />
+                      Hide 0-release
+                    </label>
+                    {user && <button className="save-search-btn" onClick={handleSaveSearch}>Save</button>}
+                  </>}
+                  {hasResults && facilities.length === 0 && (
+                    <p className="result-count">No facilities found within {radius} mi.</p>
+                  )}
+                  {error && <p className="error">{error}</p>}
+                  {facilities.length > 0 && <>
+                    <div className="toolbar-divider" />
+                    <button className="filter-toggle-btn" onClick={() => setShowFilters(v => !v)}>
+                      {showFilters ? '▲ Hide filters' : '▼ Show filters'}
+                    </button>
+                  </>}
+                  {facilities.length > 0 && (
+                    <div className="mobile-tabs">
+                      <button className={mobileView === 'list' ? 'active' : ''} onClick={() => setMobileView('list')}>List</button>
+                      <button className={mobileView === 'map' ? 'active' : ''} onClick={() => setMobileView('map')}>Map</button>
+                    </div>
                   )}
                 </div>
-              )}
-              {error && <p className="error">{error}</p>}
-              {facilities.length > 0 && (
-                <div className="mobile-tabs">
-                  <button className={mobileView === 'list' ? 'active' : ''} onClick={() => setMobileView('list')}>List</button>
-                  <button className={mobileView === 'map' ? 'active' : ''} onClick={() => setMobileView('map')}>Map</button>
-                </div>
-              )}
+
+                {facilities.length > 0 && showFilters && (
+                  <div className="toolbar-filters">
+                    <FilterPanel
+                      filters={filters}
+                      onChange={setFilters}
+                      facilities={facilities}
+                      filteredCount={filteredFacilities.length}
+                      inline
+                    />
+                  </div>
+                )}
+              </div>
+
             </div>
 
             <div className="results-grid">
               <div className={`results-map${mobileView === 'list' ? ' mobile-hidden' : ''}`}>
-                <Map facilities={facilities} onSelect={handleSelect} />
+                <Map facilities={filteredFacilities} onSelect={handleSelect} selected={selected} hideZeroReleases={hideZeroReleases} />
               </div>
               <div className={`results-list${mobileView === 'map' ? ' mobile-hidden' : ''}`}>
-                {!selected && <FacilityList facilities={facilities} onSelect={handleSelect} />}
-                {selected && <FacilityDetail facility={selected} user={user} onBack={() => setSelected(null)} />}
+                {/* Mobile: toggle between list and detail */}
+                <div className="show-mobile">
+                  {!selected && <FacilityList facilities={filteredFacilities} onSelect={handleSelect} />}
+                  {selected && <FacilityDetail facility={selected} user={user} onBack={() => setSelected(null)} />}
+                </div>
+                {/* Desktop: always show compact list */}
+                <div className="show-desktop">
+                  <FacilityList facilities={filteredFacilities} onSelect={handleSelect} compact selectedId={selected?.id} />
+                </div>
+              </div>
+              {/* Desktop-only detail panel */}
+              <div className="results-detail show-desktop">
+                {selected
+                  ? <FacilityDetail facility={selected} user={user} onBack={() => setSelected(null)} />
+                  : <div className="detail-placeholder"><p>← Select a facility to view details</p></div>
+                }
               </div>
             </div>
           </div>

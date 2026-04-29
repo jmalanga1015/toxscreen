@@ -6,7 +6,9 @@ import './FacilityDetail.css'
 
 function fmt(lbs) {
   if (lbs > 0 && lbs < 1) return '<1'
-  return lbs.toLocaleString(undefined, { maximumFractionDigits: 0 })
+  if (lbs >= 1_000_000) return `${(lbs / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`
+  if (lbs >= 1_000)     return `${(lbs / 1_000).toFixed(1).replace(/\.0$/, '')}K`
+  return Math.round(lbs).toLocaleString()
 }
 
 function ConcernBadge({ concern }) {
@@ -71,8 +73,8 @@ export default function FacilityDetail({ facility, onBack, user }) {
       </div>
 
       <div className="detail-summary">
-        <div className="summary-card">
-          <span className="summary-label">Total Released</span>
+        <div className="summary-card summary-card--total">
+          <span className="summary-label">Released</span>
           <span className="summary-value">{fmt(totalLbs)} lbs</span>
         </div>
         <div className="summary-card">
