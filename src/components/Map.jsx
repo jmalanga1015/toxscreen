@@ -17,12 +17,19 @@ function getColor(totalLbs) {
   return '#e74c3c'
 }
 
-export default function Map({ facilities, onSelect, selected, hideZeroReleases }) {
+export default function Map({ facilities, onSelect, selected, hideZeroReleases, mobileView }) {
   const containerRef = useRef(null)
   const mapRef = useRef(null)
   const markersRef = useRef([])
+  const boundsRef = useRef(null)
   const [preview, setPreview] = useState(null)
   const [ringPos, setRingPos] = useState(null)
+  const [hasBounds, setHasBounds] = useState(false)
+
+  function reCenter() {
+    if (!mapRef.current || !boundsRef.current) return
+    mapRef.current.fitBounds(boundsRef.current, { padding: 60, maxZoom: 13, duration: 1000 })
+  }
 
   useEffect(() => {
     mapRef.current = new mapboxgl.Map({
@@ -34,8 +41,19 @@ export default function Map({ facilities, onSelect, selected, hideZeroReleases }
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
     mapRef.current.on('click', () => setPreview(null))
 
-    return () => mapRef.current.remove()
+    // Resize after first paint so flex layout has resolved before Mapbox measures the container
+    const raf = requestAnimationFrame(() => mapRef.current?.resize())
+
+    return () => { cancelAnimationFrame(raf); mapRef.current.remove() }
   }, [])
+
+  // When the mobile tab switches to 'map', the container goes from display:none → visible.
+  // Mapbox doesn't know its size changed — resize so tiles fill the revealed area.
+  useEffect(() => {
+    if (mobileView !== 'map') return
+    const raf = requestAnimationFrame(() => mapRef.current?.resize())
+    return () => cancelAnimationFrame(raf)
+  }, [mobileView])
 
   useEffect(() => {
     setPreview(null)
@@ -76,6 +94,8 @@ export default function Map({ facilities, onSelect, selected, hideZeroReleases }
     }
 
     if (!bounds.isEmpty()) {
+      boundsRef.current = bounds
+      setHasBounds(true)
       map.fitBounds(bounds, { padding: 60, maxZoom: 13, duration: 1200 })
     }
   }, [facilities, hideZeroReleases])
@@ -125,6 +145,12 @@ export default function Map({ facilities, onSelect, selected, hideZeroReleases }
 
   return (
     <div ref={containerRef} className="map-container">
+      {/* Re-center button — sits below Mapbox nav controls */}
+      {hasBounds && (
+        <button className="map-recenter-btn" onClick={reCenter} title="Re-center map">
+          ⊙
+        </button>
+      )}
       {/* Pulsing ring overlay — positioned via map.project() */}
       {ringPos && ringColor && (
         <div

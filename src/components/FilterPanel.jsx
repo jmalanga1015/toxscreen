@@ -4,9 +4,9 @@ import DualRangeSlider from './DualRangeSlider'
 import './FilterPanel.css'
 
 const CONCERN_OPTIONS = [
-  { value: 'high',   label: 'High Concern',    color: '#e74c3c' },
-  { value: 'medium', label: 'Moderate Concern', color: '#e67e22' },
-  { value: 'low',    label: 'Low Concern',       color: '#27ae60' },
+  { value: 'high',   label: 'High',     color: '#e74c3c' },
+  { value: 'medium', label: 'Moderate', color: '#e67e22' },
+  { value: 'low',    label: 'Low',      color: '#27ae60' },
 ]
 
 const MEDIA_OPTIONS = [

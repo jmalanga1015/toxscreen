@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import SearchBar from './components/SearchBar'
 import Map from './components/Map'
 import FacilityList from './components/FacilityList'
@@ -21,7 +21,7 @@ function App() {
   const [selected, setSelected] = useState(null)
   const [mobileView, setMobileView] = useState('list')
   const [showSaved, setShowSaved] = useState(false)
-  const [showFilters, setShowFilters] = useState(true)
+  const [showFilters, setShowFilters] = useState(() => window.innerWidth > 768)
   const [activePage, setActivePage] = useState(null)
   const [hideZeroReleases, setHideZeroReleases] = useState(true)
   const [filters, setFilters] = useState({
@@ -35,8 +35,73 @@ function App() {
   const [authEmail, setAuthEmail] = useState('')
   const [authSent, setAuthSent] = useState(false)
   const [authLoading, setAuthLoading] = useState(false)
+  const [recentSearches, setRecentSearches] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('recentSearches') || '[]') } catch { return [] }
+  })
+  const [showRecent, setShowRecent] = useState(false)
+  const [showSavedInline, setShowSavedInline] = useState(false)
+  const [savedSearches, setSavedSearches] = useState([])
+  const [shareToast, setShareToast] = useState(false)
+  const [geoLoading, setGeoLoading] = useState(false)
 
   const debounceRef = useRef(null)
+
+  // Auto-load search from URL params (for shared links)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const q = params.get('q')
+    const r = params.get('r')
+    if (q) {
+      if (r) setRadius(Number(r))
+      handleSearch(q)
+    }
+  }, [])
+
+  function saveRecentSearch(location, miles) {
+    const updated = [
+      { location, radius: miles },
+      ...recentSearches.filter(s => s.location !== location)
+    ].slice(0, 5)
+    setRecentSearches(updated)
+    localStorage.setItem('recentSearches', JSON.stringify(updated))
+  }
+
+  async function handleGeolocate() {
+    if (!navigator.geolocation) return
+    setGeoLoading(true)
+    navigator.geolocation.getCurrentPosition(async pos => {
+      try {
+        const { latitude: lat, longitude: lng } = pos.coords
+        const token = import.meta.env.VITE_MAPBOX_TOKEN
+        const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?types=place,locality&access_token=${token}`)
+        const data = await res.json()
+        const place = data.features[0]?.place_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+        handleSearch(place)
+      } catch { } finally { setGeoLoading(false) }
+    }, () => setGeoLoading(false))
+  }
+
+  async function handleShareSearch() {
+    const url = new URL(window.location.href)
+    url.search = ''
+    url.searchParams.set('q', searchedLocation)
+    url.searchParams.set('r', radius)
+    await navigator.clipboard.writeText(url.toString())
+    setShareToast(true)
+    setTimeout(() => setShareToast(false), 2500)
+  }
+
+  async function handleShowSaved() {
+    if (showSavedInline) { setShowSavedInline(false); return }
+    setShowRecent(false)
+    setShowSavedInline(true)
+    if (!user) return  // show sign-in prompt in dropdown
+    try {
+      const { getSavedSearches } = await import('./lib/supabase')
+      const data = await getSavedSearches()
+      setSavedSearches(data)
+    } catch (err) { console.error(err) }
+  }
 
   async function runSearch(location, miles) {
     setLoading(true)
@@ -66,6 +131,7 @@ function App() {
 
   function handleSearch(location) {
     setSearchedLocation(location)
+    saveRecentSearch(location, radius)
     runSearch(location, radius)
   }
 
@@ -208,7 +274,7 @@ function App() {
           <div className="results-wrap">
             <div className="results-toolbar">
 
-              {/* Left col: search input + searched location beneath */}
+              {/* Left col: search input + searched location */}
               <div className="toolbar-search-col">
                 <SearchBar onSearch={handleSearch} loading={loading} compact />
                 {searchedLocation && (
@@ -288,8 +354,104 @@ function App() {
 
             <div className="results-grid">
               <div className={`results-map${mobileView === 'list' ? ' mobile-hidden' : ''}`}>
-                <Map facilities={filteredFacilities} onSelect={handleSelect} selected={selected} hideZeroReleases={hideZeroReleases} />
+                <Map facilities={filteredFacilities} onSelect={handleSelect} selected={selected} hideZeroReleases={hideZeroReleases} mobileView={mobileView} />
+
+                {/* Action bar — sits below the map, fills unused space on mobile */}
+                <div className="action-bar">
+                  <div className="action-bar-buttons">
+                    <button className="action-btn" onClick={handleGeolocate} disabled={geoLoading} title="Use my location">
+                      <svg className="action-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                        <circle cx="8" cy="8" r="2.5"/>
+                        <line x1="8" y1="1" x2="8" y2="4.5"/>
+                        <line x1="8" y1="11.5" x2="8" y2="15"/>
+                        <line x1="1" y1="8" x2="4.5" y2="8"/>
+                        <line x1="11.5" y1="8" x2="15" y2="8"/>
+                      </svg>
+                      <span>{geoLoading ? 'Locating…' : 'My Location'}</span>
+                    </button>
+
+                    <button
+                      className={`action-btn${showRecent ? ' action-btn--active' : ''}`}
+                      onClick={() => { setShowRecent(v => !v); setShowSavedInline(false) }}
+                      title="Recent searches"
+                    >
+                      <svg className="action-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="8" cy="8" r="6.5"/>
+                        <polyline points="8,4.5 8,8.5 10.5,10.5"/>
+                      </svg>
+                      <span>Recent</span>
+                    </button>
+
+                    <button
+                      className={`action-btn${showSavedInline ? ' action-btn--active' : ''}`}
+                      onClick={handleShowSaved}
+                      title="Saved searches"
+                    >
+                      <svg className="action-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 2h10v12.5l-5-3-5 3z"/>
+                      </svg>
+                      <span>Saved</span>
+                    </button>
+
+                    {searchedLocation && (
+                      <button
+                        className={`action-btn${shareToast ? ' action-btn--success' : ''}`}
+                        onClick={handleShareSearch}
+                        title="Share this search"
+                      >
+                        <svg className="action-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          {shareToast ? (
+                            <polyline points="2,8 6,12 14,4"/>
+                          ) : (
+                            <>
+                              <polyline points="8,1 8,10"/>
+                              <polyline points="4.5,4.5 8,1 11.5,4.5"/>
+                              <path d="M2,9.5v5h12v-5"/>
+                            </>
+                          )}
+                        </svg>
+                        <span>{shareToast ? 'Copied!' : 'Share'}</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Recent searches dropdown */}
+                  {showRecent && (
+                    <div className="action-dropdown">
+                      <p className="action-dropdown-label">Recent searches</p>
+                      {recentSearches.length === 0
+                        ? <p className="action-dropdown-empty">No recent searches yet</p>
+                        : recentSearches.map((s, i) => (
+                          <button key={i} className="action-dropdown-item" onClick={() => { setRadius(s.radius); handleSearch(s.location); setShowRecent(false) }}>
+                            <span className="action-dropdown-item-name">{s.location}</span>
+                            <span className="action-dropdown-item-meta">{s.radius} mi</span>
+                          </button>
+                        ))
+                      }
+                    </div>
+                  )}
+
+                  {/* Saved searches dropdown */}
+                  {showSavedInline && (
+                    <div className="action-dropdown">
+                      <p className="action-dropdown-label">Saved searches</p>
+                      {!user
+                        ? <p className="action-dropdown-empty">Sign in to access saved searches</p>
+                        : savedSearches.length === 0
+                          ? <p className="action-dropdown-empty">No saved searches yet</p>
+                          : savedSearches.map(s => (
+                            <button key={s.id} className="action-dropdown-item" onClick={() => { setRadius(s.radius); handleSearch(s.location); setShowSavedInline(false) }}>
+                              <span className="action-dropdown-item-name">{s.location}</span>
+                              <span className="action-dropdown-item-meta">{s.radius} mi</span>
+                            </button>
+                          ))
+                      }
+                    </div>
+                  )}
+                </div>
               </div>
+
+
               <div className={`results-list${mobileView === 'map' ? ' mobile-hidden' : ''}`}>
                 {filteredFacilities.length === 0 && facilities.length > 0 ? (
                   <div className="filter-empty-state">

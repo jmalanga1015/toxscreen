@@ -126,6 +126,7 @@
 @media (max-width: 600px) {
   .detail-summary {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
   }
 
   .chemical-header {
