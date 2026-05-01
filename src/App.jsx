@@ -21,6 +21,8 @@ function App() {
   const [selected, setSelected] = useState(null)
   const [mobileView, setMobileView] = useState('list')
   const [showSaved, setShowSaved] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   const [showFilters, setShowFilters] = useState(() => window.innerWidth > 768)
   const [activePage, setActivePage] = useState(null)
   const [hideZeroReleases, setHideZeroReleases] = useState(true)
@@ -225,11 +227,30 @@ function App() {
       <header>
         <div className="header-inner">
           <div className="header-left">
+            {/* Hamburger — mobile only */}
+            <button
+              className="hamburger"
+              onClick={() => setShowMobileMenu(v => !v)}
+              aria-label="Menu"
+            >
+              {showMobileMenu ? (
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="2" y1="2" x2="14" y2="14"/>
+                  <line x1="14" y1="2" x2="2" y2="14"/>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="2" y1="4" x2="14" y2="4"/>
+                  <line x1="2" y1="8" x2="14" y2="8"/>
+                  <line x1="2" y1="12" x2="14" y2="12"/>
+                </svg>
+              )}
+            </button>
             <img
               src="/logo-white.svg"
               alt="ToxScreen"
               className="header-logo"
-              onClick={() => setActivePage(null)}
+              onClick={() => { setActivePage(null); setShowMobileMenu(false) }}
             />
             <nav className="header-nav">
               {['about','sources','faq','contact'].map(page => (
@@ -243,6 +264,7 @@ function App() {
               ))}
             </nav>
           </div>
+          {/* Auth — desktop only; mobile auth lives in the drawer */}
           <div className="header-auth">
             {user ? (
               <>
@@ -260,6 +282,35 @@ function App() {
             )}
           </div>
         </div>
+
+        {/* Mobile nav drawer + backdrop */}
+        {showMobileMenu && (
+          <div className="mobile-nav-backdrop" onClick={() => setShowMobileMenu(false)} />
+        )}
+        {showMobileMenu && (
+          <nav className="mobile-nav-drawer">
+            {['about','sources','faq','contact'].map(page => (
+              <button
+                key={page}
+                className={`mobile-nav-link${activePage === page ? ' active' : ''}`}
+                onClick={() => { setActivePage(activePage === page ? null : page); setShowMobileMenu(false) }}
+              >
+                {page === 'faq' ? 'FAQ' : page.charAt(0).toUpperCase() + page.slice(1)}
+              </button>
+            ))}
+            {/* Auth links in drawer — same style as nav links */}
+            <div className="mobile-nav-divider" />
+            {user ? (
+              <>
+                <span className="mobile-nav-user-email">{user.email}</span>
+                <button className="mobile-nav-link" onClick={() => { setShowSaved(true); setShowMobileMenu(false) }}>Saved searches</button>
+                <button className="mobile-nav-link" onClick={() => { signOut(); setShowMobileMenu(false) }}>Sign out</button>
+              </>
+            ) : (
+              <button className="mobile-nav-link" onClick={() => { setShowMobileMenu(false); setShowAuthModal(true) }}>Sign in</button>
+            )}
+          </nav>
+        )}
       </header>
 
       <main>
@@ -487,6 +538,40 @@ function App() {
           onClose={() => setShowSaved(false)}
           onRunSearch={(location, miles) => { setRadius(miles); handleSearch(location) }}
         />
+      )}
+
+      {/* Sign-in modal */}
+      {showAuthModal && (
+        <div className="auth-modal-backdrop" onClick={() => setShowAuthModal(false)}>
+          <div className="auth-modal" onClick={e => e.stopPropagation()}>
+            <button className="auth-modal-close" onClick={() => setShowAuthModal(false)}>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="2" y1="2" x2="14" y2="14"/>
+                <line x1="14" y1="2" x2="2" y2="14"/>
+              </svg>
+            </button>
+            <img src="/logo-hero.svg" alt="ToxScreen" className="auth-modal-logo" />
+            <h2 className="auth-modal-title">Sign in to ToxScreen</h2>
+            <p className="auth-modal-sub">We'll send a magic link to your email — no password needed.</p>
+            {authSent ? (
+              <p className="auth-modal-sent">✓ Check your inbox for a sign-in link.</p>
+            ) : (
+              <form className="auth-modal-form" onSubmit={handleSendMagicLink}>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={authEmail}
+                  onChange={e => setAuthEmail(e.target.value)}
+                  required
+                  autoFocus
+                />
+                <button type="submit" disabled={authLoading}>
+                  {authLoading ? 'Sending…' : 'Send magic link'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )

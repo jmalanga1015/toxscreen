@@ -55,6 +55,170 @@ header {
   gap: 0.25rem;
 }
 
+/* Hamburger button — hidden on desktop, shown on mobile */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: white;
+  flex-shrink: 0;
+}
+.hamburger svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* Mobile nav backdrop — tap outside to close */
+.mobile-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+/* Mobile nav drawer — fixed overlay below the header */
+.mobile-nav-drawer {
+  display: none;
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  flex-direction: column;
+  background: #1a1a2e;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  padding: 0.5rem 0;
+}
+
+.mobile-nav-link {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.75);
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+}
+.mobile-nav-link:hover { background: rgba(255,255,255,0.06); color: white; }
+.mobile-nav-link.active { color: white; background: rgba(255,255,255,0.1); }
+
+.mobile-nav-divider {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 0.25rem 0;
+}
+
+.mobile-nav-user-email {
+  display: block;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  padding: 0.5rem 1.25rem 0.1rem;
+}
+
+/* ── Sign-in modal ── */
+.auth-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem 1.75rem 1.75rem;
+  width: 100%;
+  max-width: 380px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #555;
+}
+.auth-modal-close svg { width: 12px; height: 12px; }
+.auth-modal-close:hover { background: #e0e0e0; }
+
+.auth-modal-logo {
+  height: 36px;
+  margin-bottom: 1rem;
+}
+
+.auth-modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+.auth-modal-sub {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.auth-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.auth-modal-form input {
+  padding: 0.65rem 0.9rem;
+  font-size: 0.95rem;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  color: #1a1a2e;
+  transition: border-color 0.15s;
+}
+.auth-modal-form input:focus { border-color: #1a1a2e; }
+
+.auth-modal-form button {
+  padding: 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.auth-modal-form button:hover { opacity: 0.85; }
+.auth-modal-form button:disabled { opacity: 0.5; cursor: default; }
+
+.auth-modal-sent {
+  font-size: 0.95rem;
+  color: #27ae60;
+  font-weight: 600;
+  padding: 0.5rem 0;
+}
+
 .nav-link {
   background: none;
   border: none;
@@ -688,6 +852,24 @@ main {
 
   .header-nav {
     display: none;
+  }
+
+  .header-auth {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-nav-drawer {
+    display: flex;
+  }
+
+  .mobile-nav-backdrop {
+    display: block;
   }
 
   .auth-form input {
