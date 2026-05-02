@@ -67,14 +67,41 @@ async function fetchToxicology(cid) {
 
 // TRI category names that don't match PubChem directly — map to a searchable compound name
 const PUBCHEM_ALIASES = {
+  // Dioxins / PACs
   'DIOXIN AND DIOXIN-LIKE COMPOUNDS': '2,3,7,8-Tetrachlorodibenzo-p-dioxin',
   'POLYCYCLIC AROMATIC COMPOUNDS': 'benzo[a]pyrene',
   'POLYBROMINATED BIPHENYLS': 'polybrominated biphenyl',
+
+  // Chromium variants
   'CHROMIUM AND CHROMIUM COMPOUNDS(EXCEPT FOR CHROMITE ORE MINED IN THE TRANSVAAL REGION)': 'chromium',
   'CHROMIUM COMPOUNDS': 'chromium',
+  'CHROMIUM COMPOUNDS (EXCEPT FOR CHROMITE ORE MINED IN THE TRANSVAAL REGION)': 'chromium',
+
+  // Other metal compound variants
   'BARIUM COMPOUNDS (EXCEPT FOR BARIUM SULFATE (CAS NO. 7727-43-7))': 'barium',
+
+  // Acid aerosol category names
   'SULFURIC ACID (ACID AEROSOLS INCLUDING MISTS, VAPORS, GAS, FOG, AND OTHER AIRBORNE FORMS OF ANY PARTICLE SIZE)': 'sulfuric acid',
   'HYDROCHLORIC ACID (ACID AEROSOLS INCLUDING MISTS, VAPORS, GAS, FOG, AND OTHER AIRBORNE FORMS OF ANY PARTICLE SIZE)': 'hydrochloric acid',
+
+  // Glycol ether categories
+  'CERTAIN GLYCOL ETHERS': '2-ethoxyethanol',
+  'GLYCOL ETHERS': '2-ethoxyethanol',
+
+  // Nitrate category
+  'NITRATE COMPOUNDS (WATER DISSOCIABLE; REPORTABLE ONLY WHEN IN AQUEOUS SOLUTION)': 'sodium nitrate',
+  'NITRATE COMPOUNDS': 'sodium nitrate',
+
+  // Isocyanate category
+  'DIISOCYANATES': 'toluene diisocyanate',
+
+  // Mixed-isomer names that fail direct lookup
+  'XYLENE (MIXED ISOMERS)': 'm-xylene',
+  'CRESOL (MIXED ISOMERS)': 'm-cresol',
+
+  // Surfactant categories
+  'NONYLPHENOL ETHOXYLATES': 'nonylphenol',
+  'NONYLPHENOL ETHOXYLATES (NON-IONIC SURFACTANTS)': 'nonylphenol',
 }
 
 function stripCompounds(name) {
