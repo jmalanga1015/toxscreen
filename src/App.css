@@ -889,18 +889,20 @@ main {
   }
 
   .hero {
-    padding: 2.5rem 1.25rem 4rem;
+    padding: 1.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+    gap: 1.5rem;
   }
 
   .hero-text h2 {
     font-size: 1.6rem;
   }
 
-  /* Lock to viewport so flex children can fill remaining space */
-  html, body { height: 100%; }
-
-  /* Match safe-area zones to the header/hero dark background */
-  html { background: #1a1a2e; }
+  /* Lock to viewport; prevent iOS elastic/bounce scroll revealing body background */
+  html, body {
+    height: 100%;
+    overscroll-behavior: none;
+    background: #1a1a2e;
+  }
 
   .app {
     min-height: 0;   /* cancel base min-height: 100vh so 100dvh wins */
