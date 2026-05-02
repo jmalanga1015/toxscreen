@@ -6,7 +6,7 @@ import FacilityDetail from './components/FacilityDetail'
 import SavedPanel from './components/SavedPanel'
 import ContentPage from './components/ContentPage'
 import FilterPanel from './components/FilterPanel'
-import { getFacilitiesNearZip, sendMagicLink, signOut, saveSearch } from './lib/supabase'
+import { getFacilitiesNearZip, sendMagicLink, signOut, saveSearch, getFacilityById } from './lib/supabase'
 import { getChemicalInfo } from './lib/chemicals'
 import { useAuth } from './hooks/useAuth'
 import './App.css'
@@ -151,6 +151,34 @@ function App() {
 
   async function handleSaveSearch() {
     try { await saveSearch(searchedLocation, radius) } catch (err) { console.error(err) }
+  }
+
+  async function handleViewFacility(facilityId) {
+    try {
+      const facility = await getFacilityById(facilityId)
+      const location = facility.zip_code || facility.city
+      setSearchedLocation(location)
+      saveRecentSearch(location, radius)
+      setLoading(true)
+      setError(null)
+      setSelected(null)
+      setMobileView('list')
+      const data = await getFacilitiesNearZip(location, radius)
+      setFacilities(data)
+      if (data.length > 0) {
+        const maxLbs = Math.max(...data.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1)
+        const maxChemicals = Math.max(...data.map(f => f.releases.length), 1)
+        setFilters(prev => ({ ...prev, lbsRange: [0, maxLbs], chemicalsRange: [0, maxChemicals] }))
+      }
+      // Auto-select the target facility from results
+      const match = data.find(f => f.id === facilityId)
+      if (match) setSelected(match)
+    } catch (err) {
+      setError('Something went wrong loading that facility.')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleSendMagicLink(e) {
@@ -536,7 +564,8 @@ function App() {
       {showSaved && (
         <SavedPanel
           onClose={() => setShowSaved(false)}
-          onRunSearch={(location, miles) => { setRadius(miles); handleSearch(location) }}
+          onRunSearch={(location, miles) => { setRadius(miles); handleSearch(location); setShowSaved(false) }}
+          onViewFacility={(facilityId) => { handleViewFacility(facilityId); setShowSaved(false) }}
         />
       )}
 

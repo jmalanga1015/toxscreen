@@ -66,6 +66,25 @@ export async function deleteSavedFacility(id) {
   if (error) throw error
 }
 
+export async function getFacilityById(facilityId) {
+  const { data: facility, error } = await supabase
+    .from('facilities')
+    .select('*')
+    .eq('id', facilityId)
+    .single()
+  if (error) throw error
+
+  const { data: releases, error: relErr } = await supabase
+    .from('releases')
+    .select('facility_id, chemical, air_releases_lbs, water_releases_lbs, land_releases_lbs, total_releases_lbs, year')
+    .eq('facility_id', facilityId)
+    .gt('total_releases_lbs', 0)
+  if (relErr) throw relErr
+
+  // facilities table stores lat/lng; RPC aliases them to latitude/longitude
+  return { ...facility, latitude: facility.lat, longitude: facility.lng, releases: releases || [] }
+}
+
 async function geocodeLocation(query) {
   const token = import.meta.env.VITE_MAPBOX_TOKEN
   const encoded = encodeURIComponent(query)

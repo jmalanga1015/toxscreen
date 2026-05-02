@@ -5,7 +5,7 @@ import {
 } from '../lib/supabase'
 import './SavedPanel.css'
 
-export default function SavedPanel({ onClose, onRunSearch }) {
+export default function SavedPanel({ onClose, onRunSearch, onViewFacility }) {
   const [searches, setSearches] = useState([])
   const [facilities, setFacilities] = useState([])
 
@@ -63,6 +63,12 @@ export default function SavedPanel({ onClose, onRunSearch }) {
                 <span className="saved-item-label">{f.facility_name}</span>
               </div>
               <div className="saved-item-actions">
+                <button
+                  className="saved-run-btn"
+                  onClick={() => onViewFacility?.(f.facility_id)}
+                >
+                  View
+                </button>
                 <button className="saved-delete-btn" onClick={() => handleDeleteFacility(f.id)}>×</button>
               </div>
             </div>
