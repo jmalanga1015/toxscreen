@@ -354,7 +354,7 @@ function App() {
                   {hasResults && facilities.length > 0 && <>
                     <div className="toolbar-divider" />
                     <p className="result-count">
-                      {`${filteredFacilities.length} of ${facilities.length} facilit${facilities.length === 1 ? 'y' : 'ies'} within ${radius} mi`}
+                      {`${filteredFacilities.length} of ${facilities.length} facilit${facilities.length === 1 ? 'y' : 'ies'}`}
                     </p>
                     <label className="zero-toggle">
                       <input type="checkbox" checked={hideZeroReleases} onChange={e => setHideZeroReleases(e.target.checked)} />
@@ -363,7 +363,7 @@ function App() {
                     {user && <button className="save-search-btn" onClick={handleSaveSearch}>Save</button>}
                   </>}
                   {hasResults && facilities.length === 0 && (
-                    <p className="result-count">No facilities found within {radius} mi.</p>
+                    <p className="result-count">No facilities found.</p>
                   )}
                   {error && <p className="error">{error}</p>}
                   {facilities.length > 0 && <>

@@ -899,6 +899,9 @@ main {
   /* Lock to viewport so flex children can fill remaining space */
   html, body { height: 100%; }
 
+  /* Match safe-area zones to the header/hero dark background */
+  html { background: #1a1a2e; }
+
   .app {
     height: 100dvh; /* dvh accounts for mobile browser chrome */
     overflow: hidden;
@@ -990,7 +993,7 @@ main {
     justify-content: center;
     align-items: center;
     gap: 0.3rem;
-    width: auto;
+    width: 100%;
     flex-wrap: nowrap;
   }
 
