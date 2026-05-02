@@ -903,7 +903,8 @@ main {
   html { background: #1a1a2e; }
 
   .app {
-    height: 100dvh; /* dvh accounts for mobile browser chrome */
+    min-height: 0;   /* cancel base min-height: 100vh so 100dvh wins */
+    height: 100dvh;
     overflow: hidden;
   }
 
