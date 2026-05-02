@@ -114,16 +114,16 @@ function App() {
     try {
       const data = await getFacilitiesNearZip(location, miles)
       setFacilities(data)
-      // Reset range filters to match new data's actual max values
-      if (data.length > 0) {
-        const maxLbs = Math.max(...data.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1)
-        const maxChemicals = Math.max(...data.map(f => f.releases.length), 1)
-        setFilters(prev => ({
-          ...prev,
-          lbsRange: [0, maxLbs],
-          chemicalsRange: [0, maxChemicals],
-        }))
-      }
+      // Fully reset all filters for each new search
+      const maxLbs = data.length > 0 ? Math.max(...data.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1) : 1
+      const maxChemicals = data.length > 0 ? Math.max(...data.map(f => f.releases.length), 1) : 1
+      setFilters({
+        concernLevels: ['high', 'medium', 'low'],
+        media: ['air', 'water', 'land'],
+        lbsRange: [0, maxLbs],
+        chemicalsRange: [0, maxChemicals],
+        chemical: '',
+      })
     } catch (err) {
       setError('Something went wrong. Please try again.')
       console.error(err)

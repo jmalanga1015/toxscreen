@@ -950,6 +950,12 @@ main {
     overflow: hidden;
   }
 
+  /* Content pages (About, Sources, FAQ, Contact) need light bg + scroll */
+  main {
+    background: #f5f5f5;
+    overflow-y: auto;
+  }
+
   /* ── Toolbar: stack into single column ── */
   .results-toolbar {
     padding: 0.6rem 1rem;
