@@ -846,8 +846,16 @@ main {
 
 /* ── Misc ── */
 @media (max-width: 768px) {
+  /* Push header down to clear the iOS status bar / notch */
   header {
     padding: 0 1rem;
+    padding-top: env(safe-area-inset-top);
+    height: calc(56px + env(safe-area-inset-top));
+  }
+
+  /* Mobile nav drawer needs to sit below the taller header */
+  .mobile-nav-drawer {
+    top: calc(56px + env(safe-area-inset-top));
   }
 
   .header-nav {
@@ -966,12 +974,13 @@ main {
 
   /* Mobile: action bar goes below the map, full-width horizontal row */
   .results-map .action-bar {
-    order: 0;           /* natural order: after map in the column */
+    order: 0;
     width: auto;
     height: auto;
     border-right: none;
     border-top: 1px solid #eee;
-    padding: 0.75rem 1rem;
+    /* extra bottom padding clears the iOS home indicator */
+    padding: 0.6rem 0.75rem calc(0.6rem + env(safe-area-inset-bottom));
     flex-direction: row;
     align-items: center;
   }
@@ -980,21 +989,22 @@ main {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
     width: auto;
+    flex-wrap: nowrap;
   }
 
-  /* Mobile: restore pill button style */
+  /* Mobile: restore pill button style — compact so all 4 fit one line */
   .results-map .action-btn {
     flex-direction: row;
     width: auto;
     border-radius: 20px;
     border: 1.5px solid #e4e6ef;
     background: #f5f6fa;
-    padding: 0.28rem 0.7rem 0.28rem 0.55rem;
-    font-size: 0.78rem;
+    padding: 0.25rem 0.55rem 0.25rem 0.4rem;
+    font-size: 0.74rem;
     color: #1a1a2e;
-    gap: 0.32rem;
+    gap: 0.25rem;
   }
   .results-map .action-btn:hover:not(:disabled) {
     background: #eef0f8;
@@ -1036,7 +1046,7 @@ main {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
     border-right: none;
   }
 

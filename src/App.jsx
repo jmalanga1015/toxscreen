@@ -418,7 +418,7 @@ function App() {
                         <line x1="1" y1="8" x2="4.5" y2="8"/>
                         <line x1="11.5" y1="8" x2="15" y2="8"/>
                       </svg>
-                      <span>{geoLoading ? 'Locating…' : 'My Location'}</span>
+                      <span>{geoLoading ? 'Locating…' : 'Location'}</span>
                     </button>
 
                     <button
