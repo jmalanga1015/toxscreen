@@ -358,6 +358,39 @@ main {
   min-height: 0;
 }
 
+.site-footer {
+  background: #1a1a2e;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.footer-link {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.footer-link:hover { color: white; }
+
+.mobile-nav-link--legal {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+}
+
+@media (max-width: 768px) {
+  .site-footer { display: none; }
+}
+
 /* ── Hero (landing state) ── */
 .hero {
   flex: 1;

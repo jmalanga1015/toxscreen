@@ -358,6 +358,9 @@ function App() {
             ) : (
               <button className="mobile-nav-link" onClick={() => { setShowMobileMenu(false); setShowAuthModal(true) }}>Sign in</button>
             )}
+            <div className="mobile-nav-divider" />
+            <button className="mobile-nav-link mobile-nav-link--legal" onClick={() => { setActivePage('terms'); setShowMobileMenu(false) }}>Terms of Use</button>
+            <button className="mobile-nav-link mobile-nav-link--legal" onClick={() => { setActivePage('privacy'); setShowMobileMenu(false) }}>Privacy Policy</button>
           </nav>
         )}
       </header>
@@ -581,6 +584,12 @@ function App() {
           </div>
         )}
       </main>
+
+      <footer className="site-footer">
+        <span>© {new Date().getFullYear()} ToxScreen</span>
+        <button className="footer-link" onClick={() => setActivePage('terms')}>Terms of Use</button>
+        <button className="footer-link" onClick={() => setActivePage('privacy')}>Privacy Policy</button>
+      </footer>
 
       {showSaved && (
         <SavedPanel
