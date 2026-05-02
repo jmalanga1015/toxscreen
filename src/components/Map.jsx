@@ -17,7 +17,7 @@ function getColor(totalLbs) {
   return '#e74c3c'
 }
 
-export default function Map({ facilities, onSelect, selected, hideZeroReleases, mobileView }) {
+export default function Map({ facilities, onSelect, selected, hideZeroReleases, mobileView, loading }) {
   const containerRef = useRef(null)
   const mapRef = useRef(null)
   const markersRef = useRef([])
@@ -145,6 +145,12 @@ export default function Map({ facilities, onSelect, selected, hideZeroReleases, 
 
   return (
     <div ref={containerRef} className="map-container">
+      {loading && (
+        <div className="map-loading-overlay">
+          <div className="map-loading-spinner" />
+          <span className="map-loading-label">Searching…</span>
+        </div>
+      )}
       {/* Re-center button — sits below Mapbox nav controls */}
       {hasBounds && (
         <button className="map-recenter-btn" onClick={reCenter} title="Re-center map">

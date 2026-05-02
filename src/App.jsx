@@ -454,7 +454,7 @@ function App() {
 
             <div className="results-grid">
               <div className={`results-map${mobileView === 'list' ? ' mobile-hidden' : ''}`}>
-                <Map facilities={filteredFacilities} onSelect={handleSelect} selected={selected} hideZeroReleases={hideZeroReleases} mobileView={mobileView} />
+                <Map facilities={filteredFacilities} onSelect={handleSelect} selected={selected} hideZeroReleases={hideZeroReleases} mobileView={mobileView} loading={loading} />
 
                 {/* Action bar — sits below the map, fills unused space on mobile */}
                 <div className="action-bar">
