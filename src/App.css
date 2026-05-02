@@ -219,6 +219,26 @@ header {
   padding: 0.5rem 0;
 }
 
+.auth-error {
+  font-size: 0.85rem;
+  color: #c0392b;
+  background: #fdf0ee;
+  border: 1px solid #f5c6c0;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+.auth-error--header {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
 .nav-link {
   background: none;
   border: none;
@@ -252,6 +272,7 @@ header {
 .auth-form {
   display: flex;
   gap: 0.5rem;
+  position: relative;
 }
 
 .auth-form input {

@@ -37,6 +37,7 @@ function App() {
   const [authEmail, setAuthEmail] = useState('')
   const [authSent, setAuthSent] = useState(false)
   const [authLoading, setAuthLoading] = useState(false)
+  const [authError, setAuthError] = useState('')
   const [recentSearches, setRecentSearches] = useState(() => {
     try { return JSON.parse(localStorage.getItem('recentSearches') || '[]') } catch { return [] }
   })
@@ -184,9 +185,21 @@ function App() {
   async function handleSendMagicLink(e) {
     e.preventDefault()
     setAuthLoading(true)
-    try { await sendMagicLink(authEmail); setAuthSent(true) }
-    catch (err) { console.error(err) }
-    finally { setAuthLoading(false) }
+    setAuthError('')
+    try {
+      await sendMagicLink(authEmail)
+      setAuthSent(true)
+    } catch (err) {
+      const msg = err?.message ?? ''
+      if (msg.toLowerCase().includes('throttle') || msg.toLowerCase().includes('too many')) {
+        setAuthError('Too many attempts — please wait a minute before trying again.')
+      } else {
+        setAuthError('Something went wrong. Please try again.')
+      }
+      console.error(err)
+    } finally {
+      setAuthLoading(false)
+    }
   }
 
   const hasResults = searchedLocation && !loading
@@ -304,8 +317,9 @@ function App() {
               <span className="auth-sent">Check your email for a sign-in link.</span>
             ) : (
               <form className="auth-form" onSubmit={handleSendMagicLink}>
-                <input type="email" placeholder="your@email.com" value={authEmail} onChange={e => setAuthEmail(e.target.value)} required />
+                <input type="email" placeholder="your@email.com" value={authEmail} onChange={e => { setAuthEmail(e.target.value); setAuthError('') }} required />
                 <button type="submit" disabled={authLoading}>{authLoading ? 'Sending…' : 'Sign in'}</button>
+                {authError && <p className="auth-error auth-error--header">{authError}</p>}
               </form>
             )}
           </div>
@@ -590,13 +604,14 @@ function App() {
                   type="email"
                   placeholder="your@email.com"
                   value={authEmail}
-                  onChange={e => setAuthEmail(e.target.value)}
+                  onChange={e => { setAuthEmail(e.target.value); setAuthError('') }}
                   required
                   autoFocus
                 />
                 <button type="submit" disabled={authLoading}>
                   {authLoading ? 'Sending…' : 'Send magic link'}
                 </button>
+                {authError && <p className="auth-error">{authError}</p>}
               </form>
             )}
           </div>
