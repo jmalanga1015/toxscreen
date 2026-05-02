@@ -291,7 +291,7 @@ function App() {
               src="/logo-white.svg"
               alt="ToxScreen"
               className="header-logo"
-              onClick={() => { setActivePage(null); setShowMobileMenu(false) }}
+              onClick={() => { setActivePage(null); setShowMobileMenu(false); setSearchedLocation(null); setFacilities([]); setSelected(null) }}
             />
             <nav className="header-nav">
               {['about','sources','faq','contact'].map(page => (
@@ -305,6 +305,13 @@ function App() {
               ))}
             </nav>
           </div>
+          {/* Sign in button — mobile only, top-right, shown when logged out */}
+          {!user && (
+            <button className="mobile-signin-btn" onClick={() => setShowAuthModal(true)}>
+              Sign in
+            </button>
+          )}
+
           {/* Auth — desktop only; mobile auth lives in the drawer */}
           <div className="header-auth">
             {user ? (
