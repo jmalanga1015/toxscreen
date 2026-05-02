@@ -407,7 +407,7 @@ function App() {
                     </p>
                     <label className="zero-toggle">
                       <input type="checkbox" checked={hideZeroReleases} onChange={e => setHideZeroReleases(e.target.checked)} />
-                      Hide 0-release
+                      Hide Inactive
                     </label>
                     {user && <button className="save-search-btn" onClick={handleSaveSearch}>Save</button>}
                   </>}
