@@ -102,6 +102,21 @@ const PUBCHEM_ALIASES = {
   // Surfactant categories
   'NONYLPHENOL ETHOXYLATES': 'nonylphenol',
   'NONYLPHENOL ETHOXYLATES (NON-IONIC SURFACTANTS)': 'nonylphenol',
+
+  // Parenthetical qualifiers that block direct lookup
+  'TOLUENE DIISOCYANATE (MIXED ISOMERS)': 'toluene diisocyanate',
+  'ALUMINUM (FUME OR DUST)': 'aluminum',
+  'PHOSPHORUS (YELLOW OR WHITE)': 'phosphorus',
+  'VANADIUM (EXCEPT WHEN CONTAINED IN AN ALLOY)': 'vanadium',
+  'BROMOCHLORODIFLUOROMETHANE (HALON 1211)': 'bromochlorodifluoromethane',
+  'CHLORODIFLUOROMETHANE (HCFC-22)': 'chlorodifluoromethane',
+
+  // Chemical + salts
+  'NICOTINE AND SALTS': 'nicotine',
+  'TRICLOPYR-TRIETHYLAMMONIUM SALT': 'triclopyr',
+
+  // Persistent organic pollutants
+  'POLYCHLORINATED BIPHENYLS': 'Aroclor 1254',
 }
 
 function stripCompounds(name) {
