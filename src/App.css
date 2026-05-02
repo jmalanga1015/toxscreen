@@ -178,9 +178,29 @@ header {
 .auth-modal-close:hover { background: #e0e0e0; }
 
 .auth-modal-logo {
-  height: 36px;
+  height: 28px;
+  width: auto;
   margin-bottom: 1rem;
 }
+
+.auth-modal-sent-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.auth-modal-resend {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.auth-modal-resend:hover { color: #555; }
 
 .auth-modal-title {
   font-size: 1.15rem;
@@ -314,7 +334,26 @@ header {
 }
 
 .auth-form button:disabled { opacity: 0.5; }
-.auth-sent { font-size: 0.85rem; opacity: 0.85; }
+.auth-sent {
+  font-size: 0.82rem;
+  color: #39e991;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-resend-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.auth-resend-btn:hover { color: rgba(255,255,255,0.85); }
 
 .auth-email {
   font-size: 0.82rem;

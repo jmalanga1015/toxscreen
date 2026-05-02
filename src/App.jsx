@@ -321,7 +321,10 @@ function App() {
                 <button className="auth-signout-btn" onClick={signOut}>Sign out</button>
               </>
             ) : authSent ? (
-              <span className="auth-sent">Check your email for a sign-in link.</span>
+              <span className="auth-sent">
+                ✓ Check your inbox.{' '}
+                <button className="auth-resend-btn" onClick={() => setAuthSent(false)}>Try again</button>
+              </span>
             ) : (
               <form className="auth-form" onSubmit={handleSendMagicLink}>
                 <input type="email" placeholder="your@email.com" value={authEmail} onChange={e => { setAuthEmail(e.target.value); setAuthError('') }} required />
@@ -609,11 +612,14 @@ function App() {
                 <line x1="14" y1="2" x2="2" y2="14"/>
               </svg>
             </button>
-            <img src="/logo-hero.svg" alt="ToxScreen" className="auth-modal-logo" />
+            <img src="/logo-white.svg" alt="ToxScreen" className="auth-modal-logo" />
             <h2 className="auth-modal-title">Sign in to ToxScreen</h2>
             <p className="auth-modal-sub">We'll send a magic link to your email — no password needed.</p>
             {authSent ? (
-              <p className="auth-modal-sent">✓ Check your inbox for a sign-in link.</p>
+              <div className="auth-modal-sent-wrap">
+                <p className="auth-modal-sent">✓ Check your inbox for a sign-in link.</p>
+                <button className="auth-modal-resend" onClick={() => setAuthSent(false)}>Try a different email</button>
+              </div>
             ) : (
               <form className="auth-modal-form" onSubmit={handleSendMagicLink}>
                 <input
