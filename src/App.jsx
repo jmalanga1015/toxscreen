@@ -28,8 +28,8 @@ function App() {
   const [hideZeroReleases, setHideZeroReleases] = useState(true)
   const [filters, setFilters] = useState({
     concernLevels: ['high', 'medium', 'low'],
+    lbsBuckets: ['high', 'medium', 'low'],
     media: ['air', 'water', 'land'],
-    lbsRange: [0, Infinity],
     chemicalsRange: [0, Infinity],
     chemical: '',
   })
@@ -115,12 +115,11 @@ function App() {
       const data = await getFacilitiesNearZip(location, miles)
       setFacilities(data)
       // Fully reset all filters for each new search
-      const maxLbs = data.length > 0 ? Math.max(...data.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1) : 1
       const maxChemicals = data.length > 0 ? Math.max(...data.map(f => f.releases.length), 1) : 1
       setFilters({
         concernLevels: ['high', 'medium', 'low'],
+        lbsBuckets: ['high', 'medium', 'low'],
         media: ['air', 'water', 'land'],
-        lbsRange: [0, maxLbs],
         chemicalsRange: [0, maxChemicals],
         chemical: '',
       })
@@ -167,9 +166,8 @@ function App() {
       const data = await getFacilitiesNearZip(location, radius)
       setFacilities(data)
       if (data.length > 0) {
-        const maxLbs = Math.max(...data.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1)
         const maxChemicals = Math.max(...data.map(f => f.releases.length), 1)
-        setFilters(prev => ({ ...prev, lbsRange: [0, maxLbs], chemicalsRange: [0, maxChemicals] }))
+        setFilters(prev => ({ ...prev, chemicalsRange: [0, maxChemicals] }))
       }
       // Auto-select the target facility from results
       const match = data.find(f => f.id === facilityId)
@@ -204,33 +202,33 @@ function App() {
 
   const hasResults = searchedLocation && !loading
 
-  const maxLbs = facilities.length > 0
-    ? Math.max(...facilities.map(f => f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)), 1)
-    : 1
   const maxChemicals = facilities.length > 0
     ? Math.max(...facilities.map(f => f.releases.length), 1)
     : 1
 
   const resetFilters = {
     concernLevels: ['high', 'medium', 'low'],
+    lbsBuckets: ['high', 'medium', 'low'],
     media: ['air', 'water', 'land'],
-    lbsRange: [0, maxLbs],
     chemicalsRange: [0, maxChemicals],
     chemical: '',
   }
 
   const activeFilterCount = [
     filters.concernLevels.length < 3,
+    filters.lbsBuckets.length < 3,
     filters.media.length < 3,
     filters.chemical.trim() !== '',
-    filters.lbsRange[0] > 0 || filters.lbsRange[1] < maxLbs,
     filters.chemicalsRange[0] > 0 || filters.chemicalsRange[1] < maxChemicals,
   ].filter(Boolean).length
 
   const filteredFacilities = facilities.filter(f => {
     const totalLbs = f.releases.reduce((s, r) => s + r.total_releases_lbs, 0)
-    const [lbsMin, lbsMax] = filters.lbsRange
-    if (totalLbs < lbsMin || (lbsMax !== Infinity && totalLbs > lbsMax)) return false
+
+    if (filters.lbsBuckets.length < 3) {
+      const bucket = totalLbs >= 50000 ? 'high' : totalLbs >= 1000 ? 'medium' : 'low'
+      if (!filters.lbsBuckets.includes(bucket)) return false
+    }
 
     const [chemMin, chemMax] = filters.chemicalsRange
     if (f.releases.length < chemMin || (chemMax !== Infinity && f.releases.length > chemMax)) return false

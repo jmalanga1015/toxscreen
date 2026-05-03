@@ -4,9 +4,15 @@ import DualRangeSlider from './DualRangeSlider'
 import './FilterPanel.css'
 
 const CONCERN_OPTIONS = [
-  { value: 'high',   label: 'High',     color: '#e74c3c' },
-  { value: 'medium', label: 'Moderate', color: '#e67e22' },
-  { value: 'low',    label: 'Low',      color: '#27ae60' },
+  { value: 'high',   label: 'High' },
+  { value: 'medium', label: 'Moderate' },
+  { value: 'low',    label: 'Low' },
+]
+
+const LBS_OPTIONS = [
+  { value: 'high',   label: '50k+ lbs',    color: '#e74c3c' },
+  { value: 'medium', label: '1k–50k lbs',  color: '#e67e22' },
+  { value: 'low',    label: '<1k lbs',     color: '#27ae60' },
 ]
 
 const MEDIA_OPTIONS = [
@@ -110,17 +116,24 @@ export default function FilterPanel({ filters, onChange, facilities, filteredCou
     onChange({ ...filters, media: next })
   }
 
+  function toggleLbs(bucket) {
+    const next = filters.lbsBuckets.includes(bucket)
+      ? filters.lbsBuckets.filter(b => b !== bucket)
+      : [...filters.lbsBuckets, bucket]
+    onChange({ ...filters, lbsBuckets: next })
+  }
+
   const isDefault =
     filters.concernLevels.length === 3 &&
+    filters.lbsBuckets.length === 3 &&
     filters.media.length === 3 &&
-    filters.lbsRange[0] === 0 && filters.lbsRange[1] === maxLbs &&
     filters.chemicalsRange[0] === 0 && filters.chemicalsRange[1] === maxChemicals &&
     filters.chemical === ''
 
   const resetFilters = {
     concernLevels: ['high', 'medium', 'low'],
+    lbsBuckets: ['high', 'medium', 'low'],
     media: ['air', 'water', 'land'],
-    lbsRange: [0, maxLbs],
     chemicalsRange: [0, maxChemicals],
     chemical: '',
   }
@@ -130,11 +143,21 @@ export default function FilterPanel({ filters, onChange, facilities, filteredCou
       <div className="filter-panel-inline">
 
         <div className="filter-inline-group">
+          <span className="filter-inline-label">LBS Released</span>
+          {LBS_OPTIONS.map(o => (
+            <label key={o.value} className="filter-check">
+              <input type="checkbox" checked={filters.lbsBuckets.includes(o.value)} onChange={() => toggleLbs(o.value)} />
+              <span className="concern-dot" style={{ background: o.color }} />
+              {o.label}
+            </label>
+          ))}
+        </div>
+
+        <div className="filter-inline-group">
           <span className="filter-inline-label">Concern</span>
           {CONCERN_OPTIONS.map(o => (
             <label key={o.value} className="filter-check">
               <input type="checkbox" checked={filters.concernLevels.includes(o.value)} onChange={() => toggleConcern(o.value)} />
-              <span className="concern-dot" style={{ background: o.color }} />
               {o.label}
             </label>
           ))}
@@ -148,17 +171,6 @@ export default function FilterPanel({ filters, onChange, facilities, filteredCou
               {o.label}
             </label>
           ))}
-        </div>
-
-        <div className="filter-inline-group filter-inline-slider">
-          <span className="filter-inline-label">Released (lbs)</span>
-          <DualRangeSlider
-            min={0} max={maxLbs}
-            step={Math.max(1, Math.floor(maxLbs / 100))}
-            values={filters.lbsRange}
-            onChange={v => onChange({ ...filters, lbsRange: v })}
-            format={n => fmt(n)}
-          />
         </div>
 
         <div className="filter-inline-group filter-inline-slider">
@@ -197,11 +209,21 @@ export default function FilterPanel({ filters, onChange, facilities, filteredCou
       <p className="filter-count">{filteredCount} facilit{filteredCount === 1 ? 'y' : 'ies'} match</p>
 
       <div className="filter-section">
+        <label className="filter-section-label">LBS Released</label>
+        {LBS_OPTIONS.map(o => (
+          <label key={o.value} className="filter-check">
+            <input type="checkbox" checked={filters.lbsBuckets.includes(o.value)} onChange={() => toggleLbs(o.value)} />
+            <span className="concern-dot" style={{ background: o.color }} />
+            {o.label}
+          </label>
+        ))}
+      </div>
+
+      <div className="filter-section">
         <label className="filter-section-label">Concern Level</label>
         {CONCERN_OPTIONS.map(o => (
           <label key={o.value} className="filter-check">
             <input type="checkbox" checked={filters.concernLevels.includes(o.value)} onChange={() => toggleConcern(o.value)} />
-            <span className="concern-dot" style={{ background: o.color }} />
             {o.label}
           </label>
         ))}
@@ -213,17 +235,6 @@ export default function FilterPanel({ filters, onChange, facilities, filteredCou
           value={filters.chemical}
           onChange={val => onChange({ ...filters, chemical: val })}
           allChemicals={allChemicals}
-        />
-      </div>
-
-      <div className="filter-section">
-        <label className="filter-section-label">Released (lbs)</label>
-        <DualRangeSlider
-          min={0} max={maxLbs}
-          step={Math.max(1, Math.floor(maxLbs / 100))}
-          values={filters.lbsRange}
-          onChange={v => onChange({ ...filters, lbsRange: v })}
-          format={n => fmt(n)}
         />
       </div>
 
