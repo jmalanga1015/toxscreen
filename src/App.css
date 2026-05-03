@@ -159,11 +159,28 @@ header {
   text-align: center;
 }
 
+.auth-modal-close svg { width: 12px; height: 12px; }
+.auth-modal-close:hover { background: rgba(255,255,255,0.25); }
+
+.auth-modal-header {
+  background: #1a1a2e;
+  margin: -2rem -1.75rem 1.25rem;
+  border-radius: 16px 16px 0 0;
+  position: relative;
+}
+
+.auth-modal-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px 16px 0 0;
+}
+
 .auth-modal-close {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: #f0f0f0;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(255,255,255,0.15);
   border: none;
   border-radius: 50%;
   width: 30px;
@@ -172,15 +189,7 @@ header {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #555;
-}
-.auth-modal-close svg { width: 12px; height: 12px; }
-.auth-modal-close:hover { background: #e0e0e0; }
-
-.auth-modal-logo {
-  height: 32px;
-  width: auto;
-  margin-bottom: 1rem;
+  color: #fff;
 }
 
 .auth-modal-sent-wrap {

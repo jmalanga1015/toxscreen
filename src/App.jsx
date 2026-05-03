@@ -606,14 +606,15 @@ function App() {
       {showAuthModal && (
         <div className="auth-modal-backdrop" onClick={() => setShowAuthModal(false)}>
           <div className="auth-modal" onClick={e => e.stopPropagation()}>
-            <button className="auth-modal-close" onClick={() => setShowAuthModal(false)}>
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="2" y1="2" x2="14" y2="14"/>
-                <line x1="14" y1="2" x2="2" y2="14"/>
-              </svg>
-            </button>
-            <img src="/logo-color.svg" alt="ToxScreen" className="auth-modal-logo" />
-            <h2 className="auth-modal-title">Sign in to ToxScreen</h2>
+            <div className="auth-modal-header">
+              <img src="/logo-email.png" alt="ToxScreen — Know what's near you" className="auth-modal-logo" />
+              <button className="auth-modal-close" onClick={() => setShowAuthModal(false)}>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="2" y1="2" x2="14" y2="14"/>
+                  <line x1="14" y1="2" x2="2" y2="14"/>
+                </svg>
+              </button>
+            </div>
             <p className="auth-modal-sub">We'll send a magic link to your email — no password needed.</p>
             {authSent ? (
               <div className="auth-modal-sent-wrap">
