@@ -26,6 +26,9 @@ export default function ExploreMap({ user }) {
     mapRef.current = map
     map.addControl(new mapboxgl.NavigationControl(), 'top-right')
 
+    // Give the flex layout time to resolve before Mapbox measures the container
+    const raf = requestAnimationFrame(() => map.resize())
+
     map.on('load', async () => {
       try {
         const facilities = await getAllFacilitiesSummary()
@@ -156,7 +159,7 @@ export default function ExploreMap({ user }) {
       }
     })
 
-    return () => map.remove()
+    return () => { cancelAnimationFrame(raf); map.remove() }
   }, [])
 
   return (

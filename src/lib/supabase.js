@@ -97,7 +97,7 @@ async function geocodeLocation(query) {
 }
 
 export async function getAllFacilitiesSummary() {
-  const { data, error } = await supabase.rpc('get_all_facilities_summary')
+  const { data, error } = await supabase.rpc('get_all_facilities_summary').limit(50000)
   if (error) throw error
   return data
 }

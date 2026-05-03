@@ -1,7 +1,8 @@
 .explore-wrap {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -77,7 +78,14 @@
 
 .explore-map {
   flex: 1;
+  min-height: 0;
   position: relative;
+}
+
+/* Mapbox needs an explicit height on the container */
+.explore-map .mapboxgl-map {
+  width: 100%;
+  height: 100%;
 }
 
 /* Loading overlay */
