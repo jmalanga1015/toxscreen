@@ -306,6 +306,21 @@ header {
   background: rgba(255,255,255,0.12);
 }
 
+.nav-link--explore {
+  color: #39e991;
+  font-weight: 600;
+}
+
+.nav-link--explore:hover {
+  color: #39e991;
+  background: rgba(57,233,145,0.1);
+}
+
+.nav-link--explore.active {
+  color: #39e991;
+  background: rgba(57,233,145,0.15);
+}
+
 .header-auth {
   display: flex;
   align-items: center;

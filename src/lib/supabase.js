@@ -97,6 +97,12 @@ async function geocodeLocation(query) {
   return { lat, lng }
 }
 
+export async function getAllFacilitiesSummary() {
+  const { data, error } = await supabase.rpc('get_all_facilities_summary')
+  if (error) throw error
+  return data
+}
+
 export async function getFacilitiesNearZip(zip, radiusMiles = 25) {
   const { lat, lng } = await geocodeLocation(zip)
 

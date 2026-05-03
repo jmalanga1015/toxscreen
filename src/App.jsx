@@ -6,6 +6,7 @@ import FacilityDetail from './components/FacilityDetail'
 import SavedPanel from './components/SavedPanel'
 import ContentPage from './components/ContentPage'
 import FilterPanel from './components/FilterPanel'
+import ExploreMap from './components/ExploreMap'
 import { getFacilitiesNearZip, sendMagicLink, signOut, saveSearch, getFacilityById } from './lib/supabase'
 import { getChemicalInfo } from './lib/chemicals'
 import { useAuth } from './hooks/useAuth'
@@ -25,6 +26,7 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showFilters, setShowFilters] = useState(() => window.innerWidth > 768)
   const [activePage, setActivePage] = useState(null)
+  const [exploreMode, setExploreMode] = useState(false)
   const [hideZeroReleases, setHideZeroReleases] = useState(true)
   const [filters, setFilters] = useState({
     concernLevels: ['high', 'medium', 'low'],
@@ -294,11 +296,17 @@ function App() {
               onClick={() => { setActivePage(null); setShowMobileMenu(false); setSearchedLocation(null); setFacilities([]); setSelected(null) }}
             />
             <nav className="header-nav">
+              <button
+                className={`nav-link nav-link--explore${exploreMode ? ' active' : ''}`}
+                onClick={() => { setExploreMode(v => !v); setActivePage(null) }}
+              >
+                Explore
+              </button>
               {['about','sources','faq','contact'].map(page => (
                 <button
                   key={page}
                   className={`nav-link${activePage === page ? ' active' : ''}`}
-                  onClick={() => setActivePage(activePage === page ? null : page)}
+                  onClick={() => { setActivePage(activePage === page ? null : page); setExploreMode(false) }}
                 >
                   {page === 'faq' ? 'FAQ' : page.charAt(0).toUpperCase() + page.slice(1)}
                 </button>
@@ -341,11 +349,17 @@ function App() {
         )}
         {showMobileMenu && (
           <nav className="mobile-nav-drawer">
+            <button
+              className={`mobile-nav-link${exploreMode ? ' active' : ''}`}
+              onClick={() => { setExploreMode(v => !v); setActivePage(null); setShowMobileMenu(false) }}
+            >
+              Explore
+            </button>
             {['about','sources','faq','contact'].map(page => (
               <button
                 key={page}
                 className={`mobile-nav-link${activePage === page ? ' active' : ''}`}
-                onClick={() => { setActivePage(activePage === page ? null : page); setShowMobileMenu(false) }}
+                onClick={() => { setActivePage(activePage === page ? null : page); setExploreMode(false); setShowMobileMenu(false) }}
               >
                 {page === 'faq' ? 'FAQ' : page.charAt(0).toUpperCase() + page.slice(1)}
               </button>
@@ -369,7 +383,7 @@ function App() {
       </header>
 
       <main>
-        {activePage ? <ContentPage page={activePage} /> : !searchedLocation ? (
+        {exploreMode ? <ExploreMap user={user} /> : activePage ? <ContentPage page={activePage} /> : !searchedLocation ? (
           <div className="hero">
             <img src="/logo-hero.svg" alt="ToxScreen — Know what's near you" className="hero-logo" />
             <div className="hero-search">
