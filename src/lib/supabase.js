@@ -81,8 +81,7 @@ export async function getFacilityById(facilityId) {
     .gt('total_releases_lbs', 0)
   if (relErr) throw relErr
 
-  // facilities table stores lat/lng; RPC aliases them to latitude/longitude
-  return { ...facility, latitude: facility.lat, longitude: facility.lng, releases: releases || [] }
+  return { ...facility, latitude: facility.latitude, longitude: facility.longitude, releases: releases || [] }
 }
 
 async function geocodeLocation(query) {
