@@ -612,7 +612,7 @@ function App() {
                 <line x1="14" y1="2" x2="2" y2="14"/>
               </svg>
             </button>
-            <img src="/logo-white.svg" alt="ToxScreen" className="auth-modal-logo" />
+            <img src="/logo-color.svg" alt="ToxScreen" className="auth-modal-logo" />
             <h2 className="auth-modal-title">Sign in to ToxScreen</h2>
             <p className="auth-modal-sub">We'll send a magic link to your email — no password needed.</p>
             {authSent ? (
