@@ -34,10 +34,10 @@ export default function ExploreMap({ user }) {
         const geojson = {
           type: 'FeatureCollection',
           features: facilities
-            .filter(f => f.lat && f.lng)
+            .filter(f => f.latitude && f.longitude)
             .map(f => ({
               type: 'Feature',
-              geometry: { type: 'Point', coordinates: [f.lng, f.lat] },
+              geometry: { type: 'Point', coordinates: [f.longitude, f.latitude] },
               properties: {
                 id: f.id,
                 name: f.name,
