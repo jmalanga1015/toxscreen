@@ -4,9 +4,9 @@ import DualRangeSlider from './DualRangeSlider'
 import './FilterPanel.css'
 
 const CONCERN_OPTIONS = [
-  { value: 'high',   label: 'High' },
-  { value: 'medium', label: 'Moderate' },
-  { value: 'low',    label: 'Low' },
+  { value: 'high',   label: 'Carcinogenic to Humans / Likely' },
+  { value: 'medium', label: 'Suggestive Evidence' },
+  { value: 'low',    label: 'Limited Evidence' },
 ]
 
 const LBS_OPTIONS = [
@@ -154,7 +154,10 @@ export default function FilterPanel({ filters, onChange, facilities, filteredCou
         </div>
 
         <div className="filter-inline-group">
-          <span className="filter-inline-label">Concern</span>
+          <span className="filter-inline-label">
+            IRIS Classification{' '}
+            <a href="https://www.epa.gov/iris" target="_blank" rel="noreferrer" className="filter-source-link">EPA IRIS ↗</a>
+          </span>
           {CONCERN_OPTIONS.map(o => (
             <label key={o.value} className="filter-check">
               <input type="checkbox" checked={filters.concernLevels.includes(o.value)} onChange={() => toggleConcern(o.value)} />

@@ -11,10 +11,10 @@ function fmt(lbs) {
   return Math.round(lbs).toLocaleString()
 }
 
-function ConcernBadge({ concern }) {
+function ConcernBadge({ concern, irisClassification }) {
   return (
-    <span className={`concern-badge concern-${concern}`}>
-      {getConcernLabel(concern)}
+    <span className={`concern-badge concern-${concern}`} title="Source: EPA Integrated Risk Information System (IRIS)">
+      {irisClassification}
     </span>
   )
 }
@@ -104,11 +104,8 @@ export default function FacilityDetail({ facility, onBack, user }) {
                 <span className="chemical-name">{r.chemical}</span>
                 <div className="chemical-meta">
                   {info && (
-                <>
-                  <ConcernBadge concern={info.concern} />
-                  <span className="iris-label">{info.irisClassification}</span>
-                </>
-              )}
+                    <ConcernBadge concern={info.concern} irisClassification={info.irisClassification} />
+                  )}
                   <span className="chemical-total">{fmt(r.total_releases_lbs)} lbs</span>
                 </div>
               </div>
@@ -140,10 +137,10 @@ export default function FacilityDetail({ facility, onBack, user }) {
       </div>
 
       <p className="detail-footnote">
-        Release data from EPA Toxics Release Inventory (TRI), reporting year 2024.
-        Concern levels based on <a href="https://www.epa.gov/iris" target="_blank" rel="noreferrer">EPA IRIS</a> carcinogenicity classifications.
-        Descriptions from <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank" rel="noreferrer">NIH PubChem</a>.
-        Not medical advice.
+        Release data from <a href="https://www.epa.gov/toxics-release-inventory-tri-program" target="_blank" rel="noreferrer">EPA Toxics Release Inventory (TRI)</a>, reporting year 2024.
+        Chemical classifications reproduced verbatim from the <a href="https://www.epa.gov/iris" target="_blank" rel="noreferrer">EPA Integrated Risk Information System (IRIS)</a> — ToxScreen does not make independent safety determinations.
+        Toxicological descriptions from <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank" rel="noreferrer">NIH PubChem</a>.
+        This report is for informational purposes only and does not constitute medical, legal, or environmental advice.
       </p>
     </div>
   )
