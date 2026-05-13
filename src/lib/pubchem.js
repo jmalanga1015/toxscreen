@@ -2,7 +2,7 @@
 // Two-step: resolve name → CID, then fetch toxicology section by CID.
 // Results cached in localStorage for 7 days.
 
-const CACHE_PREFIX = 'pubchem3_'
+const CACHE_PREFIX = 'pubchem4_'
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 
 function getCached(name) {
@@ -45,12 +45,25 @@ function firstTwoSentences(text) {
   return result
 }
 
+// Phrases that indicate a generic section intro rather than real health-effect text
+const META_PHRASES = [
+  'this section provides',
+  'toxicity information related to this compound',
+  'including routes of exposure',
+  'this section also includes information on whether',
+]
+
+function isMetaText(text) {
+  const lower = text.toLowerCase()
+  return META_PHRASES.some(p => lower.includes(p))
+}
+
 // Recursively extract the first substantive text from PUG View's nested structure
 function extractText(node) {
   if (!node) return null
   if (node.StringWithMarkup) {
     const text = node.StringWithMarkup[0]?.String
-    if (text && text.length > 80) {
+    if (text && text.length > 80 && !isMetaText(text)) {
       const extracted = firstTwoSentences(text)
       // Only accept if it looks like a real description, not a citation stub
       if (extracted.length >= 60) return extracted
