@@ -421,7 +421,7 @@ function App() {
                     disabled={loading}
                   >
                     {Array.from({ length: 2024 - 2015 + 1 }, (_, i) => 2024 - i).map(y => (
-                      <option key={y} value={y}>{y}</option>
+                      <option key={y} value={y}>{y === 2024 ? '2024 (latest)' : y}</option>
                     ))}
                   </select>
                   {hasResults && facilities.length > 0 && <>
