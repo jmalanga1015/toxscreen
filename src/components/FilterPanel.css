@@ -68,6 +68,7 @@
   cursor: pointer;
   padding: 0.1rem 0;
   user-select: none;
+  white-space: nowrap;
 }
 
 .filter-check input[type="checkbox"] {

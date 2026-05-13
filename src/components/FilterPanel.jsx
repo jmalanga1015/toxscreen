@@ -10,9 +10,9 @@ const CONCERN_OPTIONS = [
 ]
 
 const LBS_OPTIONS = [
-  { value: 'high',   label: '50k+ lbs',    color: '#e74c3c' },
-  { value: 'medium', label: '1k–50k lbs',  color: '#e67e22' },
-  { value: 'low',    label: '<1k lbs',     color: '#27ae60' },
+  { value: 'high',   label: '50k+',   color: '#e74c3c' },
+  { value: 'medium', label: '1k–50k', color: '#e67e22' },
+  { value: 'low',    label: '<1k',    color: '#27ae60' },
 ]
 
 const MEDIA_OPTIONS = [
