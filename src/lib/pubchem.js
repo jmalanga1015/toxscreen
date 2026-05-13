@@ -2,7 +2,7 @@
 // Two-step: resolve name → CID, then fetch toxicology section by CID.
 // Results cached in localStorage for 7 days.
 
-const CACHE_PREFIX = 'pubchem2_'
+const CACHE_PREFIX = 'pubchem3_'
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 
 function getCached(name) {
@@ -35,7 +35,14 @@ async function getCID(name) {
 function firstTwoSentences(text) {
   const matches = text.match(/[^.!?]+[.!?]+/g)
   if (!matches) return text
-  return matches.slice(0, 2).join(' ').trim()
+  // Grab two sentences; if they're suspiciously short (e.g. a citation like
+  // "Smith, C. D."), keep adding sentences until we have something substantive
+  let result = ''
+  for (let i = 0; i < Math.min(matches.length, 6); i++) {
+    result = matches.slice(0, i + 1).join(' ').trim()
+    if (result.length >= 80) break
+  }
+  return result
 }
 
 // Recursively extract the first substantive text from PUG View's nested structure
@@ -43,7 +50,11 @@ function extractText(node) {
   if (!node) return null
   if (node.StringWithMarkup) {
     const text = node.StringWithMarkup[0]?.String
-    if (text && text.length > 80) return firstTwoSentences(text)
+    if (text && text.length > 80) {
+      const extracted = firstTwoSentences(text)
+      // Only accept if it looks like a real description, not a citation stub
+      if (extracted.length >= 60) return extracted
+    }
   }
   for (const section of node.Section ?? []) {
     const text = extractText(section)
