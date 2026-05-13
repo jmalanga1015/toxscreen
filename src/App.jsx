@@ -420,7 +420,7 @@ function App() {
                     onChange={e => handleYearChange(Number(e.target.value))}
                     disabled={loading}
                   >
-                    {Array.from({ length: 2024 - 1987 + 1 }, (_, i) => 2024 - i).map(y => (
+                    {Array.from({ length: 2024 - 2015 + 1 }, (_, i) => 2024 - i).map(y => (
                       <option key={y} value={y}>{y}</option>
                     ))}
                   </select>

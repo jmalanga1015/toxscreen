@@ -28,7 +28,8 @@
       "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --screenshot=/Users/jamesmalanga/ToxScreen/public/logo-email.png --window-size=600,447 --hide-scrollbars --disable-extensions --no-sandbox http://localhost:5173/logo-email.html)",
       "mcp__Claude_in_Chrome__navigate",
       "Bash(vercel --prod)",
-      "Bash(npx vercel *)"
+      "Bash(npx vercel *)",
+      "WebFetch(domain:www.epa.gov)"
     ]
   }
 }
