@@ -1092,7 +1092,22 @@ main {
   .toolbar-filters {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.25rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.18) transparent;
+  }
+
+  .toolbar-filters::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .toolbar-filters::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toolbar-filters::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.18);
+    border-radius: 3px;
   }
 
   .filter-panel-inline {
