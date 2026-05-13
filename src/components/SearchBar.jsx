@@ -58,7 +58,7 @@ function AddressInput({ value, onChange, onSelect, onSubmit, loading, inputClass
         ref={inputRef}
         type="text"
         maxLength={100}
-        placeholder="ZIP code, city, or address"
+        placeholder="Address, ZIP code, or city"
         value={value}
         className={inputClassName}
         onChange={e => { onChange(e.target.value); setOpen(true) }}
@@ -69,17 +69,23 @@ function AddressInput({ value, onChange, onSelect, onSubmit, loading, inputClass
       />
       {open && suggestions.length > 0 && (
         <ul className="address-dropdown">
-          {suggestions.map((f, i) => (
-            <li
-              key={f.id}
-              className={i === highlighted ? 'highlighted' : ''}
-              onMouseDown={() => select(f)}
-              onMouseEnter={() => setHighlighted(i)}
-            >
-              <span className="address-dropdown-main">{f.text}</span>
-              <span className="address-dropdown-sub">{f.place_name.split(`${f.text}, `)[1] || ''}</span>
-            </li>
-          ))}
+          {suggestions.map((f, i) => {
+              // For address features, f.address holds the house number; f.text is the street name
+              const primaryText = f.address ? `${f.address} ${f.text}` : f.text
+              // Sub-text: everything after the primary part in place_name
+              const subText = f.place_name.replace(`${primaryText}, `, '').replace(primaryText, '').replace(/^,\s*/, '')
+              return (
+                <li
+                  key={f.id}
+                  className={i === highlighted ? 'highlighted' : ''}
+                  onMouseDown={() => select(f)}
+                  onMouseEnter={() => setHighlighted(i)}
+                >
+                  <span className="address-dropdown-main">{primaryText}</span>
+                  <span className="address-dropdown-sub">{subText}</span>
+                </li>
+              )
+            })}
         </ul>
       )}
     </div>
