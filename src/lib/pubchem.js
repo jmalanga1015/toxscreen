@@ -132,6 +132,8 @@ const PUBCHEM_ALIASES = {
 
   // Isocyanate category
   'DIISOCYANATES': 'toluene diisocyanate',
+  'TOLUENE DIISOCYANATE': 'toluene 2,4-diisocyanate',
+  '2,4-/2,6-TOLUENE DIISOCYANATE MIXTURE (TDI)': 'toluene 2,4-diisocyanate',
 
   // Mixed-isomer names that fail direct lookup
   'XYLENE (MIXED ISOMERS)': 'm-xylene',
