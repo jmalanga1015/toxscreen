@@ -26,6 +26,7 @@ function App() {
   const [showFilters, setShowFilters] = useState(() => window.innerWidth > 768)
   const [activePage, setActivePage] = useState(null)
   const [hideZeroReleases, setHideZeroReleases] = useState(true)
+  const [year, setYear] = useState(2024)
   const [filters, setFilters] = useState({
     concernLevels: ['high', 'medium', 'low'],
     lbsBuckets: ['high', 'medium', 'low'],
@@ -106,13 +107,13 @@ function App() {
     } catch (err) { console.error(err) }
   }
 
-  async function runSearch(location, miles) {
+  async function runSearch(location, miles, selectedYear = year) {
     setLoading(true)
     setError(null)
     setSelected(null)
     setMobileView('list')
     try {
-      const data = await getFacilitiesNearZip(location, miles)
+      const data = await getFacilitiesNearZip(location, miles, selectedYear)
       setFacilities(data)
       // Fully reset all filters for each new search
       const maxChemicals = data.length > 0 ? Math.max(...data.map(f => f.releases.length), 1) : 1
@@ -144,6 +145,12 @@ function App() {
     debounceRef.current = setTimeout(() => runSearch(searchedLocation, miles), 400)
   }
 
+  function handleYearChange(newYear) {
+    setYear(newYear)
+    if (!searchedLocation) return
+    runSearch(searchedLocation, radius, newYear)
+  }
+
   function handleSelect(facility) {
     setSelected(facility)
     setMobileView('list')
@@ -163,7 +170,7 @@ function App() {
       setError(null)
       setSelected(null)
       setMobileView('list')
-      const data = await getFacilitiesNearZip(location, radius)
+      const data = await getFacilitiesNearZip(location, radius, year)
       setFacilities(data)
       if (data.length > 0) {
         const maxChemicals = Math.max(...data.map(f => f.releases.length), 1)
@@ -404,6 +411,19 @@ function App() {
                     disabled={loading}
                     className="toolbar-radius-slider"
                   />
+                  <div className="toolbar-divider" />
+                  <label className="year-label" htmlFor="toolbar-year">Year:</label>
+                  <select
+                    id="toolbar-year"
+                    className="year-select"
+                    value={year}
+                    onChange={e => handleYearChange(Number(e.target.value))}
+                    disabled={loading}
+                  >
+                    {[2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015].map(y => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
                   {hasResults && facilities.length > 0 && <>
                     <div className="toolbar-divider" />
                     <p className="result-count">
@@ -566,7 +586,7 @@ function App() {
                   {/* Mobile: toggle between list and detail */}
                   <div className="show-mobile">
                     {!selected && <FacilityList facilities={filteredFacilities} onSelect={handleSelect} />}
-                    {selected && <FacilityDetail facility={selected} user={user} onBack={() => setSelected(null)} />}
+                    {selected && <FacilityDetail facility={selected} user={user} year={year} onBack={() => setSelected(null)} />}
                   </div>
                   {/* Desktop: always show compact list */}
                   <div className="show-desktop">
@@ -577,7 +597,7 @@ function App() {
               {/* Desktop-only detail panel */}
               <div className="results-detail show-desktop">
                 {selected
-                  ? <FacilityDetail facility={selected} user={user} onBack={() => setSelected(null)} />
+                  ? <FacilityDetail facility={selected} user={user} year={year} onBack={() => setSelected(null)} />
                   : <div className="detail-placeholder"><p>← Select a facility to view details</p></div>
                 }
               </div>

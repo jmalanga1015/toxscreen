@@ -18,7 +18,17 @@
       "WebFetch(domain:pubchem.ncbi.nlm.nih.gov)",
       "Bash(xargs ls *)",
       "Bash(npm run *)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node -e \"require\\('puppeteer'\\)\")",
+      "Bash(npm list *)",
+      "Bash(node -e \"require\\('playwright'\\)\")",
+      "Bash(npx playwright *)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --screenshot=/Users/jamesmalanga/ToxScreen/public/og-image.png --window-size=1200,630 --hide-scrollbars --disable-extensions --no-sandbox http://localhost:5173/og-image.html)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --screenshot=/Users/jamesmalanga/ToxScreen/public/logo-email.png --window-size=600,150 --hide-scrollbars --disable-extensions --no-sandbox http://localhost:5173/logo-email.html)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --screenshot=/Users/jamesmalanga/ToxScreen/public/logo-email.png --window-size=600,447 --hide-scrollbars --disable-extensions --no-sandbox http://localhost:5173/logo-email.html)",
+      "mcp__Claude_in_Chrome__navigate",
+      "Bash(vercel --prod)",
+      "Bash(npx vercel *)"
     ]
   }
 }

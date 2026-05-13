@@ -66,7 +66,7 @@ export async function deleteSavedFacility(id) {
   if (error) throw error
 }
 
-export async function getFacilityById(facilityId) {
+export async function getFacilityById(facilityId, year = 2024) {
   const { data: facility, error } = await supabase
     .from('facilities')
     .select('*')
@@ -78,6 +78,7 @@ export async function getFacilityById(facilityId) {
     .from('releases')
     .select('facility_id, chemical, air_releases_lbs, water_releases_lbs, land_releases_lbs, total_releases_lbs, year')
     .eq('facility_id', facilityId)
+    .eq('year', year)
     .gt('total_releases_lbs', 0)
   if (relErr) throw relErr
 
@@ -102,7 +103,7 @@ export async function getAllFacilitiesSummary() {
   return data
 }
 
-export async function getFacilitiesNearZip(zip, radiusMiles = 25) {
+export async function getFacilitiesNearZip(zip, radiusMiles = 25, year = 2024) {
   const { lat, lng } = await geocodeLocation(zip)
 
   const { data: facilities, error } = await supabase
@@ -116,6 +117,7 @@ export async function getFacilitiesNearZip(zip, radiusMiles = 25) {
     .from('releases')
     .select('facility_id, chemical, air_releases_lbs, water_releases_lbs, land_releases_lbs, total_releases_lbs, year')
     .in('facility_id', ids)
+    .eq('year', year)
     .gt('total_releases_lbs', 0)
   if (relErr) throw relErr
 

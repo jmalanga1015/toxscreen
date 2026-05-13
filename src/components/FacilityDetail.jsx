@@ -19,7 +19,7 @@ function ConcernBadge({ concern, irisClassification }) {
   )
 }
 
-export default function FacilityDetail({ facility, onBack, user }) {
+export default function FacilityDetail({ facility, onBack, user, year = 2024 }) {
   const [pubchemDescriptions, setPubchemDescriptions] = useState({})
   const [loadingDescriptions, setLoadingDescriptions] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -102,13 +102,11 @@ export default function FacilityDetail({ facility, onBack, user }) {
             <div key={r.chemical} className="chemical-row">
               <div className="chemical-header">
                 <span className="chemical-name">{r.chemical}</span>
-                <div className="chemical-meta">
-                  {info && (
-                    <ConcernBadge concern={info.concern} irisClassification={info.irisClassification} />
-                  )}
-                  <span className="chemical-total">{fmt(r.total_releases_lbs)} lbs</span>
-                </div>
+                <span className="chemical-total">{fmt(r.total_releases_lbs)} lbs</span>
               </div>
+              {info && (
+                <ConcernBadge concern={info.concern} irisClassification={info.irisClassification} />
+              )}
 
               {loadingDescriptions && !description ? (
                 <p className="chemical-summary loading">Loading health information…</p>
@@ -137,7 +135,7 @@ export default function FacilityDetail({ facility, onBack, user }) {
       </div>
 
       <p className="detail-footnote">
-        Release data from <a href="https://www.epa.gov/toxics-release-inventory-tri-program" target="_blank" rel="noreferrer">EPA Toxics Release Inventory (TRI)</a>, reporting year 2024.
+        Release data from <a href="https://www.epa.gov/toxics-release-inventory-tri-program" target="_blank" rel="noreferrer">EPA Toxics Release Inventory (TRI)</a>, reporting year {year}.
         Chemical classifications reproduced verbatim from the <a href="https://www.epa.gov/iris" target="_blank" rel="noreferrer">EPA Integrated Risk Information System (IRIS)</a> — ToxScreen does not make independent safety determinations.
         Toxicological descriptions from <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank" rel="noreferrer">NIH PubChem</a>.
         This report is for informational purposes only and does not constitute medical, legal, or environmental advice.

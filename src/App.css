@@ -622,6 +622,29 @@ main {
   flex-shrink: 0;
 }
 
+.year-label {
+  font-size: 0.82rem;
+  color: #555;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.year-select {
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: #1a1a2e;
+  border: 1.5px solid #ddd;
+  border-radius: 6px;
+  padding: 0.2rem 0.4rem;
+  background: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.year-select:focus { border-color: #1a1a2e; }
+.year-select:disabled { opacity: 0.5; cursor: default; }
+
 .result-count {
   font-size: 0.82rem;
   color: #666;
