@@ -2,7 +2,7 @@
 // Two-step: resolve name → CID, then fetch toxicology section by CID.
 // Results cached in localStorage for 7 days.
 
-const CACHE_PREFIX = 'pubchem4_'
+const CACHE_PREFIX = 'pubchem5_'
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 
 function getCached(name) {
@@ -45,12 +45,26 @@ function firstTwoSentences(text) {
   return result
 }
 
-// Phrases that indicate a generic section intro rather than real health-effect text
+// Phrases that indicate useless/misleading text rather than real health-effect info
 const META_PHRASES = [
+  // Generic section intros
   'this section provides',
   'toxicity information related to this compound',
   'including routes of exposure',
   'this section also includes information on whether',
+  // Cosmetics Ingredient Review (CIR) — irrelevant to industrial/environmental exposure
+  'cir expert panel',
+  'safe in the present practices of use',
+  'safe as a cosmetic ingredient',
+  'safe for use in cosmetics',
+  'safe as used in',
+  'cosmetic ingredient in the practices',
+  // Water quality citation boilerplate (USGS / Smith & Nowell)
+  'health-based screening levels for evaluating water-quality',
+  'nowell, l. h.',
+  // Safety assessment boilerplate
+  'based on the data presented in this safety assessment',
+  'on the basis of the data included in this report',
 ]
 
 function isMetaText(text) {
@@ -121,7 +135,12 @@ const PUBCHEM_ALIASES = {
 
   // Mixed-isomer names that fail direct lookup
   'XYLENE (MIXED ISOMERS)': 'm-xylene',
+  'XYLENE': 'm-xylene',
+  'XYLENES': 'm-xylene',
   'CRESOL (MIXED ISOMERS)': 'm-cresol',
+  // Asbestos has no single PubChem compound — use chrysotile (most common form)
+  'ASBESTOS': 'chrysotile',
+  'ASBESTOS (FRIABLE)': 'chrysotile',
 
   // Surfactant categories
   'NONYLPHENOL ETHOXYLATES': 'nonylphenol',
